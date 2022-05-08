@@ -1,15 +1,35 @@
-# Basic Sample Hardhat Project
+# MarketPlace de videos NFT
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Creacion de una marketPlace para la venta de NFT de video.
+Para su realizacion se ha implementado un contrato estandar ERC721 importado directamente de  @OpenZeppelin.
+ Para la realizacion de este proyecto se han utilizado las siguientes tecnologias.
 
-Try running some of the following tasks:
+ Next.js
+ Solidity
+ IPFS
+ Polygon(Matic)
+ Hardhat
+ Tailwind
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
+Para el uso de la aplicacion es necesario tener previamente Metamask instalado como extension en el navegador Google Chrome paa poder importar las cuentas que se nos crearan en la red local de prueba, asi como en Mumbay.
+
+Se añaden a continuacion los comandos necesarios para el despliegue de la aplicacion en un entorno local con Node.js
+
+// Despliegue de la red local (se crean las cuentas)
+
 npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+
+// Desplegamos el contrato inteligente:
+
+npx hardhat run scripts/deploy.js --network localhost
+
+// Importamos cuentas creadas por hardhat a metamask
+
+//Seguidamente lanzamos la app
+
+npm run dev
+
+
+
+
+
