@@ -15,6 +15,7 @@ export default function CreatorDashboard() {
   useEffect(() => {
     loadNFTs()
   }, [])
+  
   async function loadNFTs() {
     const web3Modal = new Web3Modal({
       network: 'mainnet',
@@ -53,7 +54,8 @@ export default function CreatorDashboard() {
           {
             nfts.map((nft, i) => (
               <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <img src={nft.image} className="rounded" />
+                <video src={nft.image} controls/>
+                
                 <div className="p-4 bg-black">
                   <p className="text-2xl font-bold text-white">Precio - {nft.price} Eth</p>
                 </div>

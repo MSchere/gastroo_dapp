@@ -15,16 +15,14 @@ export default function Home() {
   useEffect(() => {
     loadNFTs()
   }, [])
+
   async function loadNFTs() {
     /* create a generic provider and query for unsold market items */
     const provider = new ethers.providers.JsonRpcProvider()
     const contract = new ethers.Contract(marketplaceAddress, NFTMarketplace.abi, provider)
     const data = await contract.fetchMarketItems()
 
-    /*
-    *  map over items returned from smart contract and format 
-    *  them as well as fetch their token metadata
-    */
+   //Asignacion y formateo de los elementos devueltos 
     const items = await Promise.all(data.map(async i => {
       const tokenUri = await contract.tokenURI(i.tokenId)
       const meta = await axios.get(tokenUri)
@@ -43,15 +41,17 @@ export default function Home() {
     setNfts(items)
     setLoadingState('loaded') 
   }
+
+
   async function buyNft(nft) {
-    /* needs the user to sign the transaction, so will use Web3Provider and sign it */
+    //Conexion a un Web3Provider para que el usuario firme la transaccion despues de logarse.
     const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(marketplaceAddress, NFTMarketplace.abi, signer)
 
-    /* user will be prompted to pay the asking proces to complete the transaction */
+    //Peticion de pago al usuario par que se realice la transaccion
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')   
     const transaction = await contract.createMarketSale(nft.tokenId, {
       value: price
@@ -67,7 +67,8 @@ export default function Home() {
           {
             nfts.map((nft, i) => (
               <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <img src={nft.image} />
+                
+                <video src={nft.image} controls/>
                 <div className="p-4">
                   <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
                   <div style={{ height: '70px', overflow: 'hidden' }}>

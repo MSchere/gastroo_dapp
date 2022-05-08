@@ -2,7 +2,6 @@
 
 /* Implementacion el smart contract del standard ERC721 de OpenZepplin  */
 
-
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -37,7 +36,8 @@ contract NFTMarketplace is ERC721URIStorage {
       bool sold
     );
 
-    constructor() ERC721("Metaverse Tokens", "METT") {
+    //constructor() ERC721("Metaverse Tokens", "METT") {
+    constructor() ERC721("TFG Tokens", "TFGT") {
       owner = payable(msg.sender);
     }
 
@@ -63,10 +63,7 @@ contract NFTMarketplace is ERC721URIStorage {
       return newTokenId;
     }
 
-    function createMarketItem(
-      uint256 tokenId,
-      uint256 price
-    ) private {
+    function createMarketItem( uint256 tokenId, uint256 price) private {
       require(price > 0, "El precio debe ser al menos 1 wei");
       require(msg.value == listingPrice, "El precio debe ser el mismo que en la lista de precios");
 
@@ -103,9 +100,7 @@ contract NFTMarketplace is ERC721URIStorage {
 
     /* Crea la venta de un articulo en el MarketPlace */
     /* Se transfiere la propiedad del Token y los fondos correspondientes a la transaccion entre las partes */
-    function createMarketSale(
-      uint256 tokenId
-      ) public payable {
+    function createMarketSale( uint256 tokenId ) public payable {
       uint price = idToMarketItem[tokenId].price;
       address seller = idToMarketItem[tokenId].seller;
       require(msg.value == price, "Envie el importe solicitado para completar la compra");

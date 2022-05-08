@@ -1,6 +1,10 @@
+// En este archivo se realiza la implementacion de las pruebas pertinentes al uso general
+// de las funciones definidas en el contrato inteligente.
+
+
 describe("NFTMarket", function() {
   it("Creacion y ejecucion de ventas de MarketPlace", async function() {
-    /* IMplementacion del MarketPlace*/
+    //Test para la pruba de la implementacion del MarketPlace
     const NFTMarketplace = await ethers.getContractFactory("NFTMarketplace")
     const nftMarketplace = await NFTMarketplace.deploy()
     await nftMarketplace.deployed()
@@ -10,20 +14,20 @@ describe("NFTMarket", function() {
 
     const auctionPrice = ethers.utils.parseUnits('1', 'ether')
 
-    /* Creacion de Tokens */
-    await nftMarketplace.createToken("https://www.testoken1.com", auctionPrice, { value: listingPrice })
-    await nftMarketplace.createToken("https://www.testoken2.com", auctionPrice, { value: listingPrice })
-    await nftMarketplace.createToken("https://www.testoken3.com", auctionPrice, { value: listingPrice })
+    // Test de prueba donde verificamos la correcta creacion de Tokens 
+    await nftMarketplace.createToken("https://www.probando1.es", auctionPrice, { value: listingPrice })
+    await nftMarketplace.createToken("https://www.probando2.es", auctionPrice, { value: listingPrice })
+    await nftMarketplace.createToken("https://www.probando3.es", auctionPrice, { value: listingPrice })
       
     const [_, buyerAddress] = await ethers.getSigners()
   
-    /* Ejecucion de la venta del token a otro usuario */
+    // Ejecucion de la venta del token a otro usuario 
     await nftMarketplace.connect(buyerAddress).createMarketSale(1, { value: auctionPrice })
 
-    /* Reventa de un token */
+    // Reventa de un token 
     await nftMarketplace.connect(buyerAddress).resellToken(1, auctionPrice, { value: listingPrice })
 
-    /* Consulta y retorno de los articulos no vendidos */
+    // Consulta y retorno de los articulos no vendidos 
     items = await nftMarketplace.fetchMarketItems()
     items = await Promise.all(items.map(async i => {
       const tokenUri = await nftMarketplace.tokenURI(i.tokenId)

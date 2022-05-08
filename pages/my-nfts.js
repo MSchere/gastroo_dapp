@@ -53,11 +53,12 @@ export default function MyAssets() {
   return (
     <div className="flex justify-center">
       <div className="p-4">
+      <h2 className="text-2xl py-2">Aqui se muestran tus NFT comprados.</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           {
             nfts.map((nft, i) => (
               <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <img src={nft.image} className="rounded" />
+                <video src={nft.image} controls/>
                 <div className="p-4 bg-black">
                   <p className="text-2xl font-bold text-white">Precio - {nft.price} Eth</p>
                   <button className="mt-4 w-full bg-red-500 text-white font-bold py-2 px-12 rounded" onClick={() => listNFT(nft)}>¡¡Vendelo!!</button>
