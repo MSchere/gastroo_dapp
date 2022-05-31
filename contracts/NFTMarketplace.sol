@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-/* Implementacion el smart contract del standard ERC721 de OpenZepplin  */
+/* 
+Este contrato inteligente implementa un token ERC-721 estandar importado 
+desde la libreria de OpenZeppelin.
+*/
 
 pragma solidity ^0.8.4;
 
@@ -17,6 +20,7 @@ contract NFTMarketplace is ERC721URIStorage {
 
     uint256 listingPrice = 0.025 ether;
     address payable owner;
+    bool public paused;
 
     mapping(uint256 => MarketItem) private idToMarketItem;
 
@@ -36,23 +40,34 @@ contract NFTMarketplace is ERC721URIStorage {
       bool sold
     );
 
-    //constructor() ERC721("Metaverse Tokens", "METT") {
+    /*
+    Este es el constructor para nuestro contrato inteligente.
+    Aqui especificaremos las propiedades que definiran el contrato. 
+    Aqui se inicializaran las variables de estado del contrato.
+    */
     constructor() ERC721("TFG Tokens", "TFGT") {
       owner = payable(msg.sender);
     }
 
-    /* Actualiza el precio de la cotizacion del contrato */
+    /*
+    Actualiza el precio de la cotizacion del contrato 
+    Esta cotizacion fijada la recibirá el proietario del marketplace
+    por cada una de las ventas realizadas 
+    */
     function updateListingPrice(uint _listingPrice) public payable {
       require(owner == msg.sender, "Solo el propietario del MarketPlace puede actualizar el listado de precios.");
       listingPrice = _listingPrice;
     }
 
-    /* Devuelve el listado de precios del contrato */
+    /* Devuelve el precio de la cotizacion del contrato */
     function getListingPrice() public view returns (uint256) {
       return listingPrice;
     }
 
-    /* Acuña un token y lo publica en el MarketPlace */
+    /* 
+    Con estas funciones el usuario podra realizar la creacion del NFT
+    siendo este listado a continuacion en el Marketplace
+     */
     function createToken(string memory tokenURI, uint256 price) public payable returns (uint) {
       _tokenIds.increment();
       uint256 newTokenId = _tokenIds.current();
@@ -63,6 +78,7 @@ contract NFTMarketplace is ERC721URIStorage {
       return newTokenId;
     }
 
+    /* Crea un elemento en el Marketplace basándose en un item creado */
     function createMarketItem( uint256 tokenId, uint256 price) private {
       require(price > 0, "El precio debe ser al menos 1 wei");
       require(msg.value == listingPrice, "El precio debe ser el mismo que en la lista de precios");
@@ -85,7 +101,9 @@ contract NFTMarketplace is ERC721URIStorage {
       );
     }
 
-    /* Permite la venta a su propietario de un token comprado*/
+    /*
+    Esta funcion permite la reventa al propietario actual de un token comprado anteriormente
+    */
     function resellToken(uint256 tokenId, uint256 price) public payable {
       require(idToMarketItem[tokenId].owner == msg.sender, "Solo el propieario puede realizar esta operacion");
       require(msg.value == listingPrice, "El precio debe ser el mismo que en la lista de precios");
@@ -98,7 +116,7 @@ contract NFTMarketplace is ERC721URIStorage {
       _transfer(msg.sender, address(this), tokenId);
     }
 
-    /* Crea la venta de un articulo en el MarketPlace */
+    /* realiza la venta de un token en el MarketPlace */
     /* Se transfiere la propiedad del Token y los fondos correspondientes a la transaccion entre las partes */
     function createMarketSale( uint256 tokenId ) public payable {
       uint price = idToMarketItem[tokenId].price;
@@ -137,7 +155,7 @@ contract NFTMarketplace is ERC721URIStorage {
       return items;
     }
 
-    /* Devuelve todos los Tokens no vendidos*/
+    /* Devuelve todos los Tokens no vendidos del Marketplace*/
     function fetchMarketItems() public view returns (MarketItem[] memory) {
       uint itemCount = _tokenIds.current();
       uint unsoldItemCount = _tokenIds.current() - _itemsSold.current();
@@ -155,7 +173,7 @@ contract NFTMarketplace is ERC721URIStorage {
       return items;
     }
 
-    /* Devuelve los tokens enumerados por el usuario */
+    /* Devuelve los tokens publicados por el usuario */
     function fetchItemsListed() public view returns (MarketItem[] memory) {
       uint totalItemCount = _tokenIds.current();
       uint itemCount = 0;
@@ -177,5 +195,10 @@ contract NFTMarketplace is ERC721URIStorage {
         }
       }
       return items;
+    }
+
+        function setPaused(bool _paused) public {
+        require(msg.sender == owner, "You are not the owner");
+        paused = _paused;
     }
 }

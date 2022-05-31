@@ -29,6 +29,8 @@ export default function CreateItem() {
  //subimos el video a IPFS
     const file = e.target.files[0]
     try {
+      /*El método add devuelve un resultado de tipo AddResult, que 
+      contiene las siguientes propiedades cid, mode, mtime, path y size */
       const added = await client.add(
         file,
         {
@@ -36,6 +38,7 @@ export default function CreateItem() {
 
         }
       )
+      /*Usaremos path para mostrar el archivo subido a IPFS en nuestra aplicacion*/
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       setFileUrl(url)
     } catch (error) {

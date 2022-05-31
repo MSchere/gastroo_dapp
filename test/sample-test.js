@@ -2,7 +2,7 @@
 // de las funciones definidas en el contrato inteligente.
 
 
-describe("NFTMarket", function() {
+describe("TFGMarketplace", function() {
   it("Creacion y ejecucion de ventas de MarketPlace", async function() {
     //Test para la pruba de la implementacion del MarketPlace
     const NFTMarketplace = await ethers.getContractFactory("NFTMarketplace")
