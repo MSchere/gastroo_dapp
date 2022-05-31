@@ -9,6 +9,7 @@ Para su realizacion se ha implementado un contrato estandar ERC721 importado dir
  IPFS
  Polygon(Matic)
  Hardhat
+ Ethers.js
  Tailwind
 
 Para el uso de la aplicacion es necesario tener previamente Metamask instalado como extension en el navegador Google Chrome paa poder importar las cuentas que se nos crearan en la red local de prueba, asi como en Mumbay.
@@ -22,6 +23,8 @@ npx hardhat node
 // Desplegamos el contrato inteligente:
 
 npx hardhat run scripts/deploy.js --network localhost
+npx hardhat run scripts/deploy.js --network mumbai
+npx hardhat run scripts/deploy.js --network TESTrinkeby
 
 // Importamos cuentas creadas por hardhat a metamask
 
