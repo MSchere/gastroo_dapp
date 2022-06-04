@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Web3Modal from 'web3modal'
 
-import {
-  marketplaceAddress
-} from '../config'
+import marketplaceAddress from '../artifacts/contracts/marketplace-address.json'
+import okenAddress from '../artifacts/contracts/token-address.json'
 
-import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
+import NFTMarketplace from '../artifacts/contracts/Marketplace.json'
+import Token from '../artifacts/contracts/Token.json'
 
 export default function Home() {
   const [nfts, setNfts] = useState([])
@@ -19,7 +19,8 @@ export default function Home() {
   async function loadNFTs() {
     /* create a generic provider and query for unsold market items */
     const provider = new ethers.providers.JsonRpcProvider()
-    const contract = new ethers.Contract(marketplaceAddress, NFTMarketplace.abi, provider)
+    //0x5FbDB2315678afecb367f032d93F642f64180aa3
+    const contract = new ethers.Contract(marketplaceAddress.Marketplace, NFTMarketplace.abi, provider)
     const data = await contract.fetchMarketItems()
 
    //Asignacion y formateo de los elementos devueltos 
