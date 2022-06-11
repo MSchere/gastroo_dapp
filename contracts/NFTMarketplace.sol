@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
-contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  {
+contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
@@ -50,16 +50,27 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
     Aqui se inicializaran las variables de estado del contrato.
     */
 
-    function uri(uint256 tokenId) public view virtual override(ERC1155, ERC1155URIStorage) returns (string memory) {
+    function uri(uint256 tokenId)
+        public
+        view
+        virtual
+        override(ERC1155, ERC1155URIStorage)
+        returns (string memory)
+    {
         return super.uri(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC1155Receiver) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC1155, ERC1155Receiver)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
-    
-    constructor() ERC1155("") {
-    }
+
+    constructor() ERC1155("") {}
 
     /*
     Actualiza el precio de la cotizacion del contrato 
@@ -103,10 +114,7 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
     ) private {
         uint fee = listingPrice * amount;
         require(price > 0, "Price must be at least 1 wei");
-        require(
-            msg.value == fee,
-            "Value must match the required fee"
-        );
+        require(msg.value == fee, "Value must match the required fee");
         bytes memory data;
         idToMarketItem[tokenId] = MarketItem(
             tokenId,
@@ -143,10 +151,7 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
             idToMarketItem[tokenId].tokenOwner == msg.sender,
             "Only the token owner can sell the token"
         );
-        require(
-            msg.value == fee,
-            "Value must match the required fee"
-        );
+        require(msg.value == fee, "Value must match the required fee");
         bytes memory data;
         idToMarketItem[tokenId].sold = false;
         idToMarketItem[tokenId].price = price;
@@ -172,7 +177,9 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
         idToMarketItem[tokenId].seller = payable(address(0));
         _itemsSold.increment();
         _safeTransferFrom(address(this), msg.sender, amount, tokenId, data);
-        payable(idToMarketItem[tokenId].tokenOwner).transfer(listingPrice*amount);
+        payable(idToMarketItem[tokenId].tokenOwner).transfer(
+            listingPrice * amount
+        );
         payable(seller).transfer(msg.value);
     }
 
