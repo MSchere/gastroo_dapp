@@ -1,37 +1,40 @@
-# MarketPlace de videos NFT
+# Gastroo Web3: Monetiza tu contenido culinario
 
-Creacion de una marketPlace para la venta de NFT de video.
-Para su realizacion se ha implementado un contrato estandar ERC721 importado directamente de  @OpenZeppelin.
- Para la realizacion de este proyecto se han utilizado las siguientes tecnologias.
+_Un marketplace para la venta de NFTs de recetas y videos culinarios._
 
- Next.js
- Solidity
- IPFS
- Polygon(Matic)
- Hardhat
- Ethers.js
- Tailwind
+El contrato está basado en el creado por [migueloxx](https://github.com/migueloxx/tienda-nft/commits?author=migueloxx) e implementa un Marketplace de NFTs del estandar ERC-1155.
 
-Para el uso de la aplicacion es necesario tener previamente Metamask instalado como extension en el navegador Google Chrome paa poder importar las cuentas que se nos crearan en la red local de prueba, asi como en Mumbay.
+Para la realizacion de este proyecto se han utilizado las siguientes tecnologias:
+* React.js
+* Solidity
+* IPFS
+* Hardhat
+* Web3.js
+* Moralis
 
-Se añaden a continuacion los comandos necesarios para el despliegue de la aplicacion en un entorno local con Node.js
+## Comandos para el despliegue en un entorno local:
 
-// Despliegue de la red local (se crean las cuentas)
+###  Instalación de dependencias de Node en el directorio raiz y en el del frontend:
 
+```
+npm install
+cd frontend && npm install
+```
+
+### Despliegue de la red local de Hardhat y del contrato inteligente en localhost:
+(En el directorio raiz)
+```
 npx hardhat node
+npm run deploy
+```
 
-// Desplegamos el contrato inteligente:
+### Importamos cuentas creadas por hardhat a metamask
 
-npx hardhat run scripts/deploy.js --network localhost
-npx hardhat run scripts/deploy.js --network mumbai
-npx hardhat run scripts/deploy.js --network TESTrinkeby
+### Seguidamente lanzamos la app
 
-// Importamos cuentas creadas por hardhat a metamask
-
-//Seguidamente lanzamos la app
-
-npm run dev
-
+```
+cd frontend && npm run start
+```
 
 
 
