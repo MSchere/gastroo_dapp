@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: MIT
 
 /* 
-Este contrato inteligente implementa un token ERC-1155 estandar importado 
+Este contrato inteligente implementa un token ERC-721 estandar importado 
 desde la libreria de OpenZeppelin.
 */
 
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  {
+import "hardhat/console.sol";
+
+contract NFTMarketplace_old is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
 
-    uint256 listingPrice = 0.01 ether;
-
+    uint256 listingPrice = 0.025 ether;
+    address payable owner;
     bool public paused;
 
     mapping(uint256 => MarketItem) private idToMarketItem;
@@ -27,38 +27,26 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
     struct MarketItem {
         uint256 tokenId;
         address payable seller;
-        address payable tokenOwner;
+        address payable owner;
         uint256 price;
-        uint256 cuantity;
-        bool isprivate;
         bool sold;
     }
 
     event MarketItemCreated(
         uint256 indexed tokenId,
         address seller,
-        address tokenOwner,
+        address owner,
         uint256 price,
-        uint256 cuantity,
-        bool isprivate,
         bool sold
     );
 
-    /*
+    /*createToken
     Este es el constructor para nuestro contrato inteligente.
     Aqui especificaremos las propiedades que definiran el contrato. 
     Aqui se inicializaran las variables de estado del contrato.
     */
-
-    function uri(uint256 tokenId) public view virtual override(ERC1155, ERC1155URIStorage) returns (string memory) {
-        return super.uri(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC1155Receiver) returns (bool) {
-        return super.supportsInterface(interfaceId);
-    }
-    
-    constructor() ERC1155("") {
+    constructor() ERC721("TFG Tokens", "TFGT") {
+        owner = payable(msg.sender);
     }
 
     /*
@@ -66,7 +54,11 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
     Esta cotizacion fijada la recibirá el proietario del marketplace
     por cada una de las ventas realizadas 
     */
-    function updateListingPrice(uint _listingPrice) public payable onlyOwner {
+    function updateListingPrice(uint _listingPrice) public payable {
+        require(
+            owner == msg.sender,
+            "Solo el propietario del MarketPlace puede actualizar el listado de precios."
+        );
         listingPrice = _listingPrice;
     }
 
@@ -79,53 +71,42 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
     Con estas funciones el usuario podra realizar la creacion del NFT
     siendo este listado a continuacion en el Marketplace
      */
-    function createToken(
-        string memory tokenURI,
-        uint256 amount,
-        uint256 price,
-        bool isprivate
-    ) public payable returns (uint) {
+    function createToken(string memory tokenURI, uint256 price)
+        public
+        payable
+        returns (uint)
+    {
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();
-        bytes memory data;
-        _mint(msg.sender, newTokenId, amount, data);
-        _setURI(newTokenId, tokenURI);
-        createMarketItem(newTokenId, amount, price, isprivate);
+
+        _mint(msg.sender, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
+        createMarketItem(newTokenId, price);
         return newTokenId;
     }
 
     /* Crea un elemento en el Marketplace basándose en un item creado */
-    function createMarketItem(
-        uint256 tokenId,
-        uint256 amount,
-        uint256 price,
-        bool isprivate
-    ) private {
-        uint fee = listingPrice * amount;
-        require(price > 0, "Price must be at least 1 wei");
+    function createMarketItem(uint256 tokenId, uint256 price) private {
+        require(price > 0, "El precio debe ser al menos 1 wei");
         require(
-            msg.value == fee,
-            "Value must match the required fee"
+            msg.value == listingPrice,
+            "El precio debe ser el mismo que en la lista de precios"
         );
-        bytes memory data;
+
         idToMarketItem[tokenId] = MarketItem(
             tokenId,
             payable(msg.sender),
             payable(address(this)),
             price,
-            amount,
-            isprivate,
             false
         );
 
-        _safeTransferFrom(msg.sender, address(this), tokenId, amount, data);
+        _transfer(msg.sender, address(this), tokenId);
         emit MarketItemCreated(
             tokenId,
             msg.sender,
             address(this),
             price,
-            amount,
-            isprivate,
             false
         );
     }
@@ -133,46 +114,39 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
     /*
     Esta funcion permite la reventa al propietario actual de un token comprado anteriormente
     */
-    function resellToken(
-        uint256 tokenId,
-        uint256 amount,
-        uint256 price
-    ) public payable {
-        uint fee = listingPrice * amount;
+    function resellToken(uint256 tokenId, uint256 price) public payable {
         require(
-            idToMarketItem[tokenId].tokenOwner == msg.sender,
-            "Only the token owner can sell the token"
+            idToMarketItem[tokenId].owner == msg.sender,
+            "Solo el propieario puede realizar esta operacion"
         );
         require(
-            msg.value == fee,
-            "Value must match the required fee"
+            msg.value == listingPrice,
+            "El precio debe ser el mismo que en la lista de precios"
         );
-        bytes memory data;
         idToMarketItem[tokenId].sold = false;
         idToMarketItem[tokenId].price = price;
         idToMarketItem[tokenId].seller = payable(msg.sender);
-        idToMarketItem[tokenId].tokenOwner = payable(address(this));
+        idToMarketItem[tokenId].owner = payable(address(this));
         _itemsSold.decrement();
 
-        _safeTransferFrom(msg.sender, address(this), amount, tokenId, data);
+        _transfer(msg.sender, address(this), tokenId);
     }
 
     /* realiza la venta de un token en el MarketPlace */
     /* Se transfiere la propiedad del Token y los fondos correspondientes a la transaccion entre las partes */
-    function createMarketSale(uint256 tokenId, uint256 amount) public payable {
-        uint price = idToMarketItem[tokenId].price * amount;
+    function createMarketSale(uint256 tokenId) public payable {
+        uint price = idToMarketItem[tokenId].price;
         address seller = idToMarketItem[tokenId].seller;
-        bytes memory data;
         require(
             msg.value == price,
-            "Insufficient value sent to create the sale"
+            "Envie el importe solicitado para completar la compra"
         );
-        idToMarketItem[tokenId].tokenOwner = payable(msg.sender);
+        idToMarketItem[tokenId].owner = payable(msg.sender);
         idToMarketItem[tokenId].sold = true;
         idToMarketItem[tokenId].seller = payable(address(0));
         _itemsSold.increment();
-        _safeTransferFrom(address(this), msg.sender, amount, tokenId, data);
-        payable(idToMarketItem[tokenId].tokenOwner).transfer(listingPrice*amount);
+        _transfer(address(this), msg.sender, tokenId);
+        payable(owner).transfer(listingPrice);
         payable(seller).transfer(msg.value);
     }
 
@@ -183,14 +157,14 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
         uint currentIndex = 0;
 
         for (uint i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].tokenOwner == msg.sender) {
+            if (idToMarketItem[i + 1].owner == msg.sender) {
                 itemCount += 1;
             }
         }
 
         MarketItem[] memory items = new MarketItem[](itemCount);
         for (uint i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].tokenOwner == msg.sender) {
+            if (idToMarketItem[i + 1].owner == msg.sender) {
                 uint currentId = i + 1;
                 MarketItem storage currentItem = idToMarketItem[currentId];
                 items[currentIndex] = currentItem;
@@ -208,7 +182,7 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
 
         MarketItem[] memory items = new MarketItem[](unsoldItemCount);
         for (uint i = 0; i < itemCount; i++) {
-            if (idToMarketItem[i + 1].tokenOwner == address(this)) {
+            if (idToMarketItem[i + 1].owner == address(this)) {
                 uint currentId = i + 1;
                 MarketItem storage currentItem = idToMarketItem[currentId];
                 items[currentIndex] = currentItem;
@@ -242,7 +216,8 @@ contract NFTMarketplace is  ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder  
         return items;
     }
 
-    function setPaused(bool _paused) public onlyOwner {
+    function setPaused(bool _paused) public {
+        require(msg.sender == owner, "You are not the owner");
         paused = _paused;
     }
 }
