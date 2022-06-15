@@ -1,9 +1,10 @@
 import { Card, Divider, Input, Image, Modal, Tooltip, Skeleton } from "antd";
 import Text from "antd/lib/typography/Text";
-import { CardContent } from "./NFTCard";
+import { ImageCard, CardContent } from "./NFTCard";
+import { VideoContent } from "./VideoContent";
 import {
   FileSearchOutlined,
-  CoffeeOutlined,
+  CodeSandboxOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
@@ -36,10 +37,13 @@ function MyNFTs() {
   const [visible, setVisibility] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [nftToSell, setNftToSell] = useState(null);
-  const [price, setPrice] = useState(null);
   const [loadingState, setLoadingState] = useState("not-loaded");
   const [visible2, setVisibility2] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState(null);
+  const [formInput, updateFormInput] = useState({
+    price: "",
+    amount: "",
+  });
   useEffect(() => {
     loadNFTs();
   }, []);
@@ -50,7 +54,7 @@ function MyNFTs() {
   );
   async function loadNFTs() {
     const data = await contract.methods
-      .fetchItemsListed()
+      .fetchOwnedItems()
       .call({ from: account });
 
     const items = await Promise.all(
@@ -58,20 +62,23 @@ function MyNFTs() {
         const tokenURI = await contract.methods
           .uri(i.tokenId)
           .call({ from: account });
+        const ownedAmount = await contract.methods
+          .balanceOf(account, i.tokenId)
+          .call({ from: account });
         const meta = await axios.get(tokenURI);
-        let price = Moralis.Units.FromWei(i.price.toString());
         let item = {
-          price,
           tokenId: i.tokenId,
-          seller: i.seller,
-          owner: i.owner,
-          cuantity: i.cuantity,
+          owner: account,
           isPrivate: i.isPrivate,
+          ownedAmount: ownedAmount,
           image: meta.data.image,
+          video: meta.data.video,
           name: meta.data.name,
           description: meta.data.description,
-          tokenURI,
+          ingredients: meta.data.ingredients,
+          categories: meta.data.categories,
         };
+        console.log(item);
         return item;
       }),
     );
@@ -89,24 +96,16 @@ function MyNFTs() {
     setVisibility2(true);
   };
 
-  const handleChange = (e) => {
-    setPrice(e.target.value);
-  };
-
-  async function listNFT(nft, price) {
+  async function listNFT(nft, price, amount) {
     if (!price) return;
     const priceFormatted = Moralis.Units.ETH(price);
-    let listingPrice = await contract.methods
-      .getListingPrice()
-      .call({ from: account });
-    listingPrice = listingPrice.toString();
+    let fee = await contract.methods.getFee().call({ from: account });
+    fee = Moralis.Units.ETH((price * amount) / fee);
     const tokenId = nft.tokenId;
-    console.log("Owner: " + nft.owner);
-    console.log("Seller: " + nft.seller);
-    console.log("Current account: " + account);
     const transaction = await contract.methods
-      .resellToken(tokenId, priceFormatted)
-      .send({ from: account, value: listingPrice });
+      .createMarketOffer(tokenId, amount, priceFormatted)
+      .send({ from: account, value: fee });
+    loadNFTs();
   }
   return (
     <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
@@ -118,8 +117,8 @@ function MyNFTs() {
               <Card
                 hoverable
                 actions={[
-                  <Tooltip title="Ver en el explorador">
-                    <FileSearchOutlined
+                  <Tooltip title="Ver en el Etherscan">
+                    <CodeSandboxOutlined
                       onClick={() =>
                         window.open(
                           `${getExplorer(chainId)}address/${nft.token_address}`,
@@ -128,21 +127,23 @@ function MyNFTs() {
                       }
                     />
                   </Tooltip>,
-                  <Tooltip title="Ver receta">
-                    <CoffeeOutlined onClick={() => handleTransferClick2(nft)} />
+                  <Tooltip title="Ver contenido">
+                    <FileSearchOutlined
+                      onClick={() => handleTransferClick2(nft)}
+                    />
                   </Tooltip>,
                   <Tooltip title="Poner NFT en venta">
                     <DollarOutlined onClick={() => handleTransferClick(nft)} />
                   </Tooltip>,
                 ]}
-                style={{ width: 240, border: "2px solid #e7eaf3" }}
-                cover={<video src={nft.image} controls />}
                 key={i}
               >
+                <ImageCard image={nft.image} />
                 <CardContent
                   name={nft.name}
                   description={nft.token_address}
-                  cuantity={nft.cuantity}
+                  sellerAddress={nft.seller}
+                  amount={"x" + nft.ownedAmount}
                   price={""}
                 />
               </Card>
@@ -155,22 +156,48 @@ function MyNFTs() {
         visible={visible}
         cancelText="Cancelar"
         onCancel={() => setVisibility(false)}
-        onOk={() => listNFT(nftToSell, price)}
+        onOk={() => listNFT(nftToSell, formInput.price, formInput.amount)}
         confirmLoading={isPending}
         okText="Listar"
       >
         {nftToSell && (
-          <Input placeholder="precio" onChange={(e) => handleChange(e)} />
+          <>
+            <Input
+              style={{
+                width: "20%",
+              }}
+              placeholder="cantidad"
+              onChange={(e) => {
+                updateFormInput({ ...formInput, amount: e.target.value });
+              }}
+            />
+            <Input
+              style={{
+                width: "20%",
+              }}
+              placeholder="precio"
+              onChange={(e) => {
+                updateFormInput({ ...formInput, price: e.target.value });
+              }}
+            />
+          </>
         )}
       </Modal>
       <Modal
-        title={`Receta de ${selectedNFT?.name || "NFT"}`}
+        title={`Contenido de ${selectedNFT?.name || "NFT"}`}
         visible={visible2}
         onOk={() => setVisibility2(false)}
         onCancel={() => setVisibility2(false)}
         cancelText="Cerrar"
       >
-        <Text>{selectedNFT?.description || "NFT"}</Text>
+        <VideoContent
+          name={selectedNFT?.name}
+          video={selectedNFT?.video}
+          description={selectedNFT?.description}
+          ingredients={selectedNFT?.ingredients}
+          categories={selectedNFT?.categories}
+          owner={selectedNFT?.owner}
+        />
       </Modal>
     </div>
   );

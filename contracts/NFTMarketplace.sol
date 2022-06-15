@@ -16,39 +16,49 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    Counters.Counter private _itemsSold;
+    Counters.Counter private _offerIds;
+    Counters.Counter private _offersInMarket;
 
-    uint256 listingPrice = 0.01 ether;
+
+    //1/fee
+    uint256 fee = 100;
 
     bool public paused;
 
     mapping(uint256 => MarketItem) private idToMarketItem;
+    mapping(uint256 => MarketOffer) private idToMarketOffer;
 
     struct MarketItem {
         uint256 tokenId;
-        address payable seller;
-        address payable tokenOwner;
-        uint256 price;
-        uint256 cuantity;
-        bool isprivate;
-        bool sold;
+        address payable creator;
+        uint256 totalAmount;
+        bool isPrivate;
     }
 
-    event MarketItemCreated(
+    struct MarketOffer {
+        MarketItem item;
+        uint256 offerId;
+        address payable seller;
+        uint256 price;
+        uint256 amount;
+        bool isActive;
+    }
+
+    event MarketOfferCreated(
         uint256 indexed tokenId,
         address seller,
-        address tokenOwner,
         uint256 price,
-        uint256 cuantity,
-        bool isprivate,
-        bool sold
+        uint256 amount
     );
 
-    /*
-    Este es el constructor para nuestro contrato inteligente.
-    Aqui especificaremos las propiedades que definiran el contrato. 
-    Aqui se inicializaran las variables de estado del contrato.
-    */
+    function updateFee(uint _fee) public payable onlyOwner{
+        fee = _fee;
+    }
+
+    /* Devuelve el precio de la cotizacion del contrato */
+    function getFee() public view returns (uint256) {
+        return fee;
+    }
 
     function uri(uint256 tokenId)
         public
@@ -70,6 +80,11 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         return super.supportsInterface(interfaceId);
     }
 
+    /*
+    Este es el constructor para nuestro contrato inteligente.
+    Aqui especificaremos las propiedades que definiran el contrato. 
+    Aqui se inicializaran las variables de estado del contrato.
+    */
     constructor() ERC1155("") {}
 
     /*
@@ -77,13 +92,13 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     Esta cotizacion fijada la recibirá el proietario del marketplace
     por cada una de las ventas realizadas 
     */
-    function updateListingPrice(uint _listingPrice) public payable onlyOwner {
-        listingPrice = _listingPrice;
+    function updateMarketFee(uint _fee) public payable onlyOwner {
+        fee = _fee;
     }
 
     /* Devuelve el precio de la cotizacion del contrato */
-    function getListingPrice() public view returns (uint256) {
-        return listingPrice;
+    function getMarketFee() public view returns (uint256) {
+        return fee;
     }
 
     /* 
@@ -93,155 +108,131 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     function createToken(
         string memory tokenURI,
         uint256 amount,
-        uint256 price,
-        bool isprivate
+        bool isPrivate
     ) public payable returns (uint) {
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();
         bytes memory data;
         _mint(msg.sender, newTokenId, amount, data);
         _setURI(newTokenId, tokenURI);
-        createMarketItem(newTokenId, amount, price, isprivate);
+        idToMarketItem[newTokenId] = MarketItem(
+            newTokenId,
+            payable(msg.sender),
+            amount,
+            isPrivate        
+            );
         return newTokenId;
     }
 
     /* Crea un elemento en el Marketplace basándose en un item creado */
-    function createMarketItem(
+    function createMarketOffer(
         uint256 tokenId,
         uint256 amount,
-        uint256 price,
-        bool isprivate
-    ) private {
-        uint fee = listingPrice * amount;
+        uint256 price    
+        ) public payable {
         require(price > 0, "Price must be at least 1 wei");
-        require(msg.value == fee, "Value must match the required fee");
+        require(
+            msg.value == ((price * amount) / fee),
+            "Value must match the required fee"
+        );
         bytes memory data;
-        idToMarketItem[tokenId] = MarketItem(
-            tokenId,
+        _safeTransferFrom(msg.sender, address(this), tokenId, amount, data);
+        _offerIds.increment();
+        uint256 newOfferId = _offerIds.current();
+        idToMarketOffer[newOfferId] = MarketOffer(
+            idToMarketItem[tokenId],
+            newOfferId,
             payable(msg.sender),
-            payable(address(this)),
             price,
             amount,
-            isprivate,
-            false
+            true
         );
-
-        _safeTransferFrom(msg.sender, address(this), tokenId, amount, data);
-        emit MarketItemCreated(
+        _offersInMarket.increment();
+        emit MarketOfferCreated(
             tokenId,
             msg.sender,
-            address(this),
             price,
-            amount,
-            isprivate,
-            false
+            amount
         );
-    }
-
-    /*
-    Esta funcion permite la reventa al propietario actual de un token comprado anteriormente
-    */
-    function resellToken(
-        uint256 tokenId,
-        uint256 amount,
-        uint256 price
-    ) public payable {
-        uint fee = listingPrice * amount;
-        require(
-            idToMarketItem[tokenId].tokenOwner == msg.sender,
-            "Only the token owner can sell the token"
-        );
-        require(msg.value == fee, "Value must match the required fee");
-        bytes memory data;
-        idToMarketItem[tokenId].sold = false;
-        idToMarketItem[tokenId].price = price;
-        idToMarketItem[tokenId].seller = payable(msg.sender);
-        idToMarketItem[tokenId].tokenOwner = payable(address(this));
-        _itemsSold.decrement();
-
-        _safeTransferFrom(msg.sender, address(this), amount, tokenId, data);
     }
 
     /* realiza la venta de un token en el MarketPlace */
     /* Se transfiere la propiedad del Token y los fondos correspondientes a la transaccion entre las partes */
-    function createMarketSale(uint256 tokenId, uint256 amount) public payable {
-        uint price = idToMarketItem[tokenId].price * amount;
-        address seller = idToMarketItem[tokenId].seller;
+    function createMarketSale(uint256 offerId, uint256 amount) public payable {
+        uint tokenId = idToMarketOffer[offerId].item.tokenId;
+        address creator = idToMarketOffer[offerId].item.creator;
+        uint price = idToMarketOffer[offerId].price * amount;
+        address seller = idToMarketOffer[offerId].seller;
+        uint remainingAmount = idToMarketOffer[offerId].amount - amount;
         bytes memory data;
         require(
             msg.value == price,
             "Insufficient value sent to create the sale"
         );
-        idToMarketItem[tokenId].tokenOwner = payable(msg.sender);
-        idToMarketItem[tokenId].sold = true;
-        idToMarketItem[tokenId].seller = payable(address(0));
-        _itemsSold.increment();
-        _safeTransferFrom(address(this), msg.sender, amount, tokenId, data);
-        payable(idToMarketItem[tokenId].tokenOwner).transfer(
-            listingPrice * amount
-        );
+        _safeTransferFrom(address(this), msg.sender, tokenId, amount, data);
+        
+        payable(creator).transfer(price / fee);
         payable(seller).transfer(msg.value);
+        idToMarketOffer[offerId].amount = remainingAmount;
+        if (remainingAmount <= 0) {
+            idToMarketOffer[offerId].seller = payable(address(0));
+            idToMarketOffer[offerId].isActive = false;
+            _offersInMarket.decrement();
+        }
     }
 
-    /* Devuelve los tokens que han sido comprados por el usuario*/
-    function fetchMyNFTs() public view returns (MarketItem[] memory) {
+    /* Devuelve todos las ofertas activas del Marketplace*/
+    function fetchMarketOffers() public view returns (MarketOffer[] memory) {
+        uint currentIndex = 0;
+        MarketOffer[] memory offers = new MarketOffer[](_offersInMarket.current());
+        for (uint i = 1; i <= _offerIds.current(); i++) {
+            if (idToMarketOffer[i].isActive) {
+                MarketOffer storage currentOffer = idToMarketOffer[i];
+                offers[currentIndex] = currentOffer;
+                currentIndex += 1;
+            }
+        }
+        return offers;
+    }
+
+    /* Devuelve todos las ofertas publicadas por el usuario*/
+    function fetchMyOffers() public view returns (MarketOffer[] memory) {
+        uint totalOfferCount = _offerIds.current();
+        uint currentIndex = 0;
+        uint offerCount = 0;
+        for (uint i = 1; i <= totalOfferCount; i++) {
+            if (idToMarketOffer[i].isActive && (idToMarketOffer[i].seller == msg.sender)) {
+                offerCount += 1;
+            }
+        }
+        MarketOffer[] memory offers = new MarketOffer[](offerCount);
+        for (uint i = 1; i <= totalOfferCount; i++) {
+            if (idToMarketOffer[i].isActive && (idToMarketOffer[i].seller == msg.sender)) {
+                MarketOffer storage currentOffer = idToMarketOffer[i];
+                offers[currentIndex] = currentOffer;
+                currentIndex += 1;
+            }
+        }
+        return offers;
+    }
+
+
+    /* Devuelve los tokens del usuario */
+    function fetchOwnedItems() public view returns (MarketItem[] memory) {
         uint totalItemCount = _tokenIds.current();
         uint itemCount = 0;
         uint currentIndex = 0;
 
-        for (uint i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].tokenOwner == msg.sender) {
+        for (uint i = 1; i <= totalItemCount; i++) {
+            if (balanceOf(msg.sender, i) > 0) {
                 itemCount += 1;
             }
         }
 
         MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].tokenOwner == msg.sender) {
-                uint currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
-    }
-
-    /* Devuelve todos los Tokens no vendidos del Marketplace*/
-    function fetchMarketItems() public view returns (MarketItem[] memory) {
-        uint itemCount = _tokenIds.current();
-        uint unsoldItemCount = _tokenIds.current() - _itemsSold.current();
-        uint currentIndex = 0;
-
-        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
-        for (uint i = 0; i < itemCount; i++) {
-            if (idToMarketItem[i + 1].tokenOwner == address(this)) {
-                uint currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
-    }
-
-    /* Devuelve los tokens publicados por el usuario */
-    function fetchItemsListed() public view returns (MarketItem[] memory) {
-        uint totalItemCount = _tokenIds.current();
-        uint itemCount = 0;
-        uint currentIndex = 0;
-
-        for (uint i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == msg.sender) {
-                itemCount += 1;
-            }
-        }
-
-        MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == msg.sender) {
-                uint currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
+        for (uint i = 1; i <= totalItemCount; i++) {
+            if (balanceOf(msg.sender, i) > 0) {
+                MarketItem storage currentItem = idToMarketItem[i];
                 items[currentIndex] = currentItem;
                 currentIndex += 1;
             }

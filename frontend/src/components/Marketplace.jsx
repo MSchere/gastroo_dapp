@@ -2,12 +2,13 @@ import React from "react";
 import axios from "axios";
 import { getExplorer } from "helpers/networks";
 import { Card, Modal, Tooltip, Skeleton, Input } from "antd";
-import { CardContent } from "./NFTCard";
+import { CardContent, ImageCard } from "./NFTCard";
+import { VideoContent } from "./VideoContent";
 import Text from "antd/lib/typography/Text";
 import {
   FileSearchOutlined,
   ShoppingCartOutlined,
-  CoffeeOutlined,
+  CodeSandboxOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
@@ -33,13 +34,13 @@ const styles = {
 function Marketplace() {
   const { Moralis, account, chainId } = useMoralis();
   const web3 = new Web3(Moralis.provider);
-  const [nfts, setNfts] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
   const [visible, setVisibility] = useState(false);
   const [visible2, setVisibility2] = useState(false);
-  const [selectedNFT, setSelectedNFT] = useState(null);
-  const [nftToBuy, setNftToBuy] = useState(null);
-  const [cuantity, setCuantity] = useState(null);
+  const [selectedNFT, setSelectedOffer] = useState(null);
+  const [nftToBuy, setOffer] = useState(null);
+  const [amountToBuy, setamount] = useState(null);
 
   const contract = new web3.eth.Contract(
     MarketplaceContract.abi,
@@ -49,13 +50,13 @@ function Marketplace() {
   const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
-    loadNFTs();
+    loadOffers();
   }, []);
 
-  async function loadNFTs() {
+  async function loadOffers() {
     /* create a generic provider and query for unsold market items */
     const data = await contract.methods
-      .fetchMarketItems()
+      .fetchMarketOffers()
       .call({ from: account });
 
     //Asignacion y formateo de los elementos devueltos
@@ -63,36 +64,45 @@ function Marketplace() {
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await contract.methods
-          .uri(i.tokenId)
+          .uri(i.item.tokenId)
           .call({ from: account });
-        //const meta = await fetchIPFSDoc(tokenUri);
-        const meta = await axios.get(tokenUri);
+        const meta = await axios.get(tokenUri).catch(function (error) {
+          console.log(error);
+        });
         let price = Moralis.Units.FromWei(i.price.toString());
         let item = {
-          price,
-          tokenId: i.tokenId,
+          offerId: i.offerId,
+          tokenId: i.item.tokenId,
           seller: i.seller,
           owner: i.owner,
-          cuantity: i.cuantity,
-          isPrivate: i.isPrivate,
+          amount: i.amount,
+          price,
+          totalAmount: i.item.totalAmount,
+          isPrivate: i.item.isPrivate,
           image: meta.data.image,
+          video: meta.data.video,
           name: meta.data.name,
           description: meta.data.description,
+          ingredients: meta.data.ingredients,
+          categories: meta.data.categories,
         };
+        console.log(item);
         return item;
       }),
     );
-    setNfts(items);
+    setOffers(items);
     setLoadingState("loaded");
   }
 
-  async function buyNft(nft, cuantity) {
-    //Peticion de pago al usuario par que se realice la transaccion
-    const price = Moralis.Units.ETH(nft.price.toString()) * cuantity;
+  async function buyNft(offer, amountToBuy) {
+    console.log(offer.tokenId);
+    console.log(offer.offerId);
+    const formattedPrice =
+      Moralis.Units.ETH(offer.price.toString()) * amountToBuy;
     await contract.methods
-      .createMarketSale(nft.tokenId, cuantity)
-      .send({ from: account, value: price });
-    loadNFTs();
+      .createMarketSale(offer.offerId, amountToBuy)
+      .send({ from: account, value: formattedPrice });
+    loadOffers();
   }
 
   async function fetchIPFSDoc(tokenUri) {
@@ -102,17 +112,17 @@ function Marketplace() {
   }
 
   const handleTransferClick = (nft) => {
-    setNftToBuy(nft);
+    setOffer(nft);
     setVisibility(true);
   };
 
   const handleTransferClick2 = (nft) => {
-    setSelectedNFT(nft);
+    setSelectedOffer(nft);
     setVisibility2(true);
   };
 
   const handleChange = (e) => {
-    setCuantity(e.target.value);
+    setamount(e.target.value);
   };
 
   return (
@@ -120,39 +130,43 @@ function Marketplace() {
       <h1>🛒 Mercado de NFTs</h1>
       <div style={styles.NFTs}>
         <Skeleton loading={!loadingState}>
-          {nfts.map((nft, i) => {
+          {offers.map((offer, i) => {
             return (
               <Card
                 hoverable
                 actions={[
-                  <Tooltip title="Ver en el explorador">
-                    <FileSearchOutlined
+                  <Tooltip title="Ver en Etherscan">
+                    <CodeSandboxOutlined
                       onClick={() =>
                         window.open(
-                          `${getExplorer(chainId)}address/${nft.token_address}`,
+                          `${getExplorer(chainId)}address/${
+                            offer.item.token_address
+                          }`,
                           "_blank",
                         )
                       }
                     />
                   </Tooltip>,
-                  <Tooltip title="Ver receta">
-                    <CoffeeOutlined onClick={() => handleTransferClick2(nft)} />
+                  <Tooltip title="Ver contenido">
+                    <FileSearchOutlined
+                      onClick={() => handleTransferClick2(offer)}
+                    />
                   </Tooltip>,
                   <Tooltip title="Comprar NFT">
                     <ShoppingCartOutlined
-                      onClick={() => handleTransferClick(nft)}
+                      onClick={() => handleTransferClick(offer)}
                     />
                   </Tooltip>,
                 ]}
-                style={{ width: 240, border: "2px solid #e7eaf3" }}
-                cover={<video src={nft.image} controls />}
                 key={i}
               >
+                <ImageCard image={offer.image} />
                 <CardContent
-                  name={nft.name}
-                  description={nft.token_address}
-                  cuantity={nft.cuantity}
-                  price={nft.price}
+                  name={offer.name}
+                  description={offer.token_address}
+                  amount={offer.amount + " / " + offer.totalAmount}
+                  sellerAddress={""}
+                  price={offer.price}
                 />
               </Card>
             );
@@ -160,26 +174,33 @@ function Marketplace() {
         </Skeleton>
       </div>
       <Modal
-        title={`Comprar ${nftToBuy?.name || "NFT"}`}
+        title={`Comprar ${nftToBuy?.name || "offer"}`}
         visible={visible}
         cancelText="Cancelar"
         onCancel={() => setVisibility(false)}
-        onOk={() => buyNft(nftToBuy, cuantity)}
+        onOk={() => buyNft(nftToBuy, amountToBuy)}
         confirmLoading={isPending}
-        okText="Listar"
+        okText="Comprar"
       >
         {nftToBuy && (
           <Input placeholder="cantidad" onChange={(e) => handleChange(e)} />
         )}
       </Modal>
       <Modal
-        title={`Receta de ${selectedNFT?.name || "NFT"}`}
+        title={`Contenido de ${selectedNFT?.name || "offer"}`}
         visible={visible2}
         onOk={() => setVisibility2(false)}
         onCancel={() => setVisibility2(false)}
         cancelText="Cerrar"
       >
-        <Text>{selectedNFT?.description || "NFT"}</Text>
+        <VideoContent
+          name={selectedNFT?.name}
+          video={selectedNFT?.video}
+          description={selectedNFT?.description}
+          ingredients={selectedNFT?.ingredients}
+          categories={selectedNFT?.categories}
+          owner={selectedNFT?.owner}
+        />
       </Modal>
     </div>
   );

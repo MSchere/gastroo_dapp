@@ -3,11 +3,12 @@ import { Avatar, Col, Divider, Image, Row, Space, Typography } from "antd";
 import { MdRemoveRedEye } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 
-export const ImageCard = (image) => {
+export const ImageCard = ({ image }) => {
   return (
     <>
       <Image
         src={image}
+        width={120}
         alt="Header-Card-Img"
         preview={{
           mask: <MdRemoveRedEye style={{ fontSize: 40 }} />,
@@ -17,7 +18,13 @@ export const ImageCard = (image) => {
   );
 };
 
-export const CardContent = ({ name, description, cuantity, price }) => {
+export const CardContent = ({
+  name,
+  description,
+  sellerAddress,
+  amount,
+  price,
+}) => {
   return (
     <>
       <Typography.Title level={4}>{name}</Typography.Title>
@@ -25,12 +32,17 @@ export const CardContent = ({ name, description, cuantity, price }) => {
       <Typography.Text>{description}</Typography.Text>
 
       <Row justify="space-between" style={{ marginTop: 15 }}>
-        <Col className="align-items-center color-cyan">
+        <Col>
           <FaEthereum style={{ marginRight: 3 }} />
-          <Typography.Text strong>{price} ETH</Typography.Text>
+          <Typography.Text strong>{price}</Typography.Text>
         </Col>
-        <Col className="align-items-center secondary-text">
-          <Typography.Text strong>x{cuantity}</Typography.Text>
+        <Col>
+          <Typography.Text strong>{amount}</Typography.Text>
+        </Col>
+      </Row>
+      <Row justify="space-between" style={{ marginTop: 15 }}>
+        <Col>
+          <Typography.Text type="secondary">{sellerAddress}</Typography.Text>
         </Col>
       </Row>
     </>

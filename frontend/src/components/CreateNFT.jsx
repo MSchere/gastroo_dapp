@@ -89,13 +89,16 @@ function CreateNFT() {
   const { Moralis } = useMoralis();
   const { account } = useMoralis();
   const web3 = new Web3(Moralis.provider);
-  const [fileUrl, setFileUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [uploadState, setUploadState] = useState(0);
   const [formInput, updateFormInput] = useState({
-    price: "",
     name: "",
-    description: "",
-    cuantity: "",
+    amount: "",
     isPrivate: false,
+    description: "",
+    ingredients: "",
+    categories: "",
   });
 
   const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
@@ -106,37 +109,40 @@ function CreateNFT() {
   );
 
   async function uploadToIPFS() {
-    const { name, description, price } = formInput;
-    if (!name || !description || !price || !fileUrl) return;
+    const { name, description, ingredients, categories } = formInput;
+    console.log(imageUrl);
+    console.log(videoUrl);
+
+    if (!name || !description || !imageUrl || !videoUrl) return;
     //Subimos el json con los metadartos a IPFS
     const data = JSON.stringify({
       name,
       description,
-      image: fileUrl,
+      ingredients,
+      categories,
+      image: imageUrl,
+      video: videoUrl,
     });
     try {
       const added = await client.add(data);
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       //Despues de la subida del Json, se devuelve la URL para utilizarla en la transaccion
+      console.log("Metadatos subidos correctamente");
       return url;
     } catch (error) {
       console.log("Upss...Algo ha ido mal subiendo tu archivo: ", error);
     }
   }
 
-  async function listNFTForSale() {
+  async function createNFT() {
     const url = await uploadToIPFS();
 
     //Creacion del NFT
-    const price = Moralis.Units.ETH(formInput.price);
-    const cuantity = formInput.cuantity;
+    const amount = formInput.amount;
     const isPrivate = formInput.isPrivate;
-    const fee =
-      (await contract.methods.getListingPrice().call({ from: account })) *
-      cuantity;
     await contract.methods
-      .createToken(url, cuantity, price, isPrivate)
-      .send({ from: account, value: fee });
+      .createToken(url, amount, isPrivate)
+      .send({ from: account });
     openNotification({
       message: "¡NFTs creados! 😊",
       description: "¡Disfrútalos!",
@@ -146,23 +152,42 @@ function CreateNFT() {
   async function onChange(e) {
     let { status } = "loading";
     //Comprobamos que el archivo introducido es del formato correcto(mp4).
-    var allowedExtensions = /(.mp4)$/i;
-    if (!allowedExtensions.exec(e.fileList[0].name)) {
+    var allowedExtensions;
+    var n = 0;
+    if (uploadState == 0) {
+      allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
+    } else if (uploadState == 1) {
+      allowedExtensions = /(.mp4)$/i;
+      n = n + 1;
+    } else {
+      message.error(`No se pueden subir más archivos`);
+      status = "error";
+    }
+    if (!allowedExtensions.exec(e.fileList[n].name)) {
       message.error(`${e.file.name} formato de archivo incorrecto`);
+      status = "error";
     }
     //subimos el video a IPFS
-    const myfile = e.fileList[0].originFileObj;
-    console.log(myfile);
+    const myfile = e.fileList[n].originFileObj;
     try {
       /*El método add devuelve un resultado de tipo AddResult, que 
    contiene las siguientes propiedades cid, mode, mtime, path y size */
-      const added = await client.add(myfile, {
-        progress: (prog) => console.log(`received: ${prog}`),
-      });
-      /*Usaremos path para mostrar el archivo subido a IPFS en nuestra aplicacion*/
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      setFileUrl(url);
-      status = "done";
+      if (status != "error") {
+        const added = await client.add(myfile, {
+          progress: (prog) => console.log(`received: ${prog}`),
+        });
+        /*Usaremos path para mostrar el archivo subido a IPFS en nuestra aplicacion*/
+        const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+        if (uploadState == 0) {
+          setImageUrl(url);
+          setUploadState(1);
+        } else if (uploadState == 1) {
+          setVideoUrl(url);
+          setUploadState(2);
+        }
+        console.log("STATE: " + uploadState);
+        status = "done";
+      }
     } catch (error) {
       status = "error";
     }
@@ -172,7 +197,7 @@ function CreateNFT() {
     if (status === "done") {
       message.success(`${e.file.name} archivo cargado correctamente`);
     } else if (status === "error") {
-      message.error(`${e.file.name} error cargando el archivo`);
+      //message.error(`${e.file.name} error cargando el archivo`);
     }
   }
 
@@ -203,6 +228,7 @@ function CreateNFT() {
           <Text strong>Nombre del NFT</Text>
         </div>
         <Input
+          maxLength={25}
           size="large"
           onChange={(e) => {
             updateFormInput({ ...formInput, name: e.target.value });
@@ -215,7 +241,7 @@ function CreateNFT() {
         </div>
         <TextArea
           showCount
-          maxLength={1000}
+          maxLength={500}
           style={{
             height: 120,
             width: "100%",
@@ -223,6 +249,40 @@ function CreateNFT() {
           }}
           onChange={(e) => {
             updateFormInput({ ...formInput, description: e.target.value });
+          }}
+        />
+      </div>
+      <div style={styles.select}>
+        <div style={styles.textWrapper}>
+          <Text strong>Ingredientes</Text>
+        </div>
+        <TextArea
+          showCount
+          maxLength={100}
+          style={{
+            height: 60,
+            width: "100%",
+            marginBottom: 10,
+          }}
+          onChange={(e) => {
+            updateFormInput({ ...formInput, ingredients: e.target.value });
+          }}
+        />
+      </div>
+      <div style={styles.select}>
+        <div style={styles.textWrapper}>
+          <Text strong>Categorías</Text>
+        </div>
+        <TextArea
+          showCount
+          maxLength={50}
+          style={{
+            height: 30,
+            width: "100%",
+            marginBottom: 10,
+          }}
+          onChange={(e) => {
+            updateFormInput({ ...formInput, categories: e.target.value });
           }}
         />
       </div>
@@ -237,22 +297,7 @@ function CreateNFT() {
           placeholder="unidades"
           size="large"
           onChange={(e) => {
-            updateFormInput({ ...formInput, cuantity: e.target.value });
-          }}
-        />
-        <div style={styles.textWrapper}>
-          <Text strong style={{ marginLeft: 50 }}>
-            Precio
-          </Text>
-        </div>
-        <Input
-          style={{
-            width: "20%",
-          }}
-          placeholder="ETH"
-          size="large"
-          onChange={(e) => {
-            updateFormInput({ ...formInput, price: e.target.value });
+            updateFormInput({ ...formInput, amount: e.target.value });
           }}
         />
       </div>
@@ -284,7 +329,7 @@ function CreateNFT() {
         size="large"
         style={{ width: "100%", marginTop: "25px" }}
         disabled={false}
-        onClick={() => listNFTForSale()}
+        onClick={() => createNFT()}
       >
         ¡Crear!
       </Button>
