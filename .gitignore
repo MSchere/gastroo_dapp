@@ -1,5 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.vscode
 
 # dependencies
 /frontend/node_modules
@@ -18,12 +19,10 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
-
-node_modules
-.env
 /frontend/coverage
 /frontend/coverage.json
 /frontend/typechain
+/frontend/src/contracts/*.json
 /cache
 
 # dependencies
