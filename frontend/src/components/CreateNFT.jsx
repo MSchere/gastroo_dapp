@@ -96,6 +96,7 @@ function CreateNFT() {
     name: "",
     amount: "",
     isPrivate: false,
+    isFungible: false,
     description: "",
     ingredients: "",
     categories: "",
@@ -140,9 +141,20 @@ function CreateNFT() {
     //Creacion del NFT
     const amount = formInput.amount;
     const isPrivate = formInput.isPrivate;
+    const isFungible = formInput.isFungible;
+    let fee;
+    if (isFungible) {
+      console.log("Fungible token minting");
+      fee = await contract.methods.getFungMintingFee().call({ from: account });
+    } else {
+      console.log("Non-fungible token minting");
+      fee = await contract.methods.getMintingFee().call({ from: account });
+    }
+    fee = fee * amount;
+
     await contract.methods
-      .createToken(url, amount, isPrivate)
-      .send({ from: account });
+      .createToken(url, amount, isPrivate, isFungible)
+      .send({ from: account, value: fee });
     openNotification({
       message: "¡NFTs creados! 😊",
       description: "¡Disfrútalos!",
@@ -221,15 +233,15 @@ function CreateNFT() {
       }
     >
       <div style={styles.header}>
-        <h3>Creador de NFTs</h3>
+        <h3>🖼️ Creador de NFTs</h3>
       </div>
       <div style={styles.select}>
         <div style={styles.textWrapper}>
           <Text strong>Nombre del NFT</Text>
         </div>
         <Input
+          placeholder="El nombre de tu plato"
           maxLength={25}
-          size="large"
           onChange={(e) => {
             updateFormInput({ ...formInput, name: e.target.value });
           }}
@@ -240,6 +252,7 @@ function CreateNFT() {
           <Text strong>Descripción</Text>
         </div>
         <TextArea
+          placeholder="Describe como preparar tu plato..."
           showCount
           maxLength={500}
           style={{
@@ -257,6 +270,7 @@ function CreateNFT() {
           <Text strong>Ingredientes</Text>
         </div>
         <TextArea
+          placeholder="Harina, huevo, azucar, leche, pepitas de chocolate..."
           showCount
           maxLength={100}
           style={{
@@ -274,8 +288,9 @@ function CreateNFT() {
           <Text strong>Categorías</Text>
         </div>
         <TextArea
+          placeholder="Dulce, sin gluten, vegano, postre..."
           showCount
-          maxLength={50}
+          maxLength={100}
           style={{
             height: 30,
             width: "100%",
@@ -294,8 +309,7 @@ function CreateNFT() {
           style={{
             width: "20%",
           }}
-          placeholder="unidades"
-          size="large"
+          placeholder="Unidades"
           onChange={(e) => {
             updateFormInput({ ...formInput, amount: e.target.value });
           }}

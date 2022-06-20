@@ -2,17 +2,24 @@ import React from "react";
 import { Avatar, Col, Divider, Image, Row, Space, Typography } from "antd";
 import { MdRemoveRedEye } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
+import { useState } from "react";
 
 export const ImageCard = ({ image }) => {
+  const [visible, setVisible] = useState(false);
   return (
     <>
       <Image
         src={image}
-        width={120}
         alt="Header-Card-Img"
         preview={{
-          mask: <MdRemoveRedEye style={{ fontSize: 40 }} />,
+          visible,
+          src: image,
+          onVisibleChange: (value) => {
+            setVisible(value);
+          },
         }}
+        width={175}
+        onClick={() => setVisible(true)}
       />
     </>
   );

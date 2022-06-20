@@ -27,6 +27,9 @@ function MenuItems() {
       <Menu.Item key="/myNFTs">
         <NavLink to="/myNFTs">👛 Wallet de NFTs</NavLink>
       </Menu.Item>
+      <Menu.Item key="/myOffers">
+        <NavLink to="/myOffers">💸 Mis ofertas</NavLink>
+      </Menu.Item>
       <Menu.Item key="/1inch">
         <NavLink to="/1inch">🏦 Exchange</NavLink>
       </Menu.Item>

@@ -19,7 +19,6 @@ import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import QuickStart from "components/QuickStart";
-import OrderCreator from "components/OrderCreator";
 import Marketplace from "components/Marketplace";
 import Contract from "components/Contract/Contract";
 import Text from "antd/lib/typography/Text";
@@ -28,6 +27,7 @@ import MenuItems from "components/MenuItems";
 import CreateNFT from "components/CreateNFT";
 import CreatorDashboard from "components/Dashboard";
 import MyNFTs from "components/MyNFTs";
+import MyOffers from "components/MyOffers";
 const { Header, Footer } = Layout;
 
 const styles = {
@@ -100,6 +100,9 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/myNFTs">
               <MyNFTs />
+            </Route>
+            <Route path="/myOffers">
+              <MyOffers />
             </Route>
             <Route path="/1inch">
               <Tabs defaultActiveKey="1" style={{ alignItems: "center" }}>
