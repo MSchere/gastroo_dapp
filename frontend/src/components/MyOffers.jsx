@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
+import crypto from "crypto";
 import { getExplorer } from "helpers/networks";
-import { Card, Modal, Tooltip, Spin, Input } from "antd";
+import { Card, Modal, Tooltip, Menu, Spin, notification } from "antd";
 import { CardContent, ImageCard } from "./NFTCard";
 import { VideoContent } from "./VideoContent";
 import Text from "antd/lib/typography/Text";
@@ -13,23 +14,10 @@ import {
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Web3 from "web3";
-const { Meta } = Card;
+import AES_key from "../contracts/aes_key.json";
 
 import MarketplaceContract from "../contracts/Marketplace.json";
 import marketplaceAddress from "../contracts/marketplace-address.json";
-
-const styles = {
-  NFTs: {
-    display: "flex",
-    flexWrap: "wrap",
-    WebkitBoxPack: "start",
-    justifyContent: "flex-start",
-    margin: "0 auto",
-    maxWidth: "1000px",
-    width: "100%",
-    gap: "10px",
-  },
-};
 
 function MyOffers() {
   const { Moralis, account, chainId } = useMoralis();
@@ -40,7 +28,6 @@ function MyOffers() {
   const [visible2, setVisibility2] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [offerToCancel, setOffer] = useState(null);
-  const [amountToBuy, setamount] = useState(null);
 
   const contract = new web3.eth.Contract(
     MarketplaceContract.abi,
@@ -67,23 +54,44 @@ function MyOffers() {
         const meta = await axios.get(tokenUri).catch(function (error) {
           console.log(error);
         });
+        let item;
         let price = Moralis.Units.FromWei(i.price.toString());
-        let item = {
-          offerId: i.offerId,
-          tokenId: i.item.tokenId,
-          seller: i.seller,
-          owner: i.owner,
-          amount: i.amount,
-          price,
-          totalAmount: i.item.totalAmount,
-          isPrivate: i.item.isPrivate,
-          image: meta.data.image,
-          video: meta.data.video,
-          name: meta.data.name,
-          description: meta.data.description,
-          ingredients: meta.data.ingredients,
-          categories: meta.data.categories,
-        };
+        if (i.item.isPrivate) {
+          item = {
+            offerId: i.offerId,
+            tokenId: i.item.tokenId,
+            seller: i.seller,
+            owner: i.owner,
+            amount: i.amount,
+            price,
+            totalAmount: i.item.totalAmount,
+            isPrivate: i.item.isPrivate,
+            image: meta.data.image,
+            video: decrypt(meta.data.video),
+            name: meta.data.name,
+            description: decrypt(meta.data.description),
+            ingredients: decrypt(meta.data.ingredients),
+            categories: meta.data.categories,
+          };
+        } else {
+          item = {
+            offerId: i.offerId,
+            tokenId: i.item.tokenId,
+            seller: i.seller,
+            owner: i.owner,
+            amount: i.amount,
+            price,
+            totalAmount: i.item.totalAmount,
+            isPrivate: i.item.isPrivate,
+            isFungible: i.item.isFungible,
+            image: meta.data.image,
+            video: meta.data.video,
+            name: meta.data.name,
+            description: meta.data.description,
+            ingredients: meta.data.ingredients,
+            categories: meta.data.categories,
+          };
+        }
         console.log(item);
         return item;
       }),
@@ -96,15 +104,26 @@ function MyOffers() {
     await contract.methods
       .cancelMarketOffer(offer.offerId)
       .send({ from: account });
+    openNotification();
     setVisibility(false);
     loadOffers();
   }
 
-  async function fetchIPFSDoc(tokenUri) {
-    const url = `https://ipfs.io/ipfs/${tokenUri}`;
-    const response = await fetch(url);
-    return await response.json;
+  function decrypt(content) {
+    const KEY = AES_key.AES_KEY;
+    const IV = AES_key.AES_IV;
+    let decipher = crypto.createDecipheriv("aes-256-cbc", KEY, IV);
+    let decrypted = decipher.update(content, "base64", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
   }
+
+  const openNotification = () => {
+    notification["success"]({
+      placement: "bottomLeft",
+      message: "¡Oferta cancelada! 😢",
+    });
+  };
 
   const handleTransferClick = (offer) => {
     setOffer(offer);
@@ -116,19 +135,21 @@ function MyOffers() {
     setVisibility2(true);
   };
 
-  const handleChange = (e) => {
-    setamount(e.target.value);
-  };
-
   if (isLoaded) {
     return (
-      <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
-        <h1>💸 Mis ofertas</h1>
-        <div style={styles.NFTs}>
+      <div>
+        <Menu className="menu-content" style={{ marginBottom: "15px" }}>
+          <Menu.Item>
+            <h1>💸 Mis ofertas</h1>
+          </Menu.Item>
+        </Menu>
+        <div className="NFT-wallet">
           {offers.map((offer, i) => {
             return (
               <Card
+                className="nft-card"
                 hoverable
+                bordered={false}
                 actions={[
                   <Tooltip title="Ver en Etherscan">
                     <CodeSandboxOutlined
@@ -155,13 +176,18 @@ function MyOffers() {
                 ]}
                 key={i}
               >
-                <ImageCard image={offer.image} />
+                <ImageCard
+                  image={offer.image}
+                  isPrivate={offer.isPrivate}
+                  isFungible={offer.isFungible}
+                />{" "}
                 <CardContent
                   name={offer.name}
                   description={offer.token_address}
                   amount={offer.amount + " / " + offer.totalAmount}
                   sellerAddress={""}
                   price={offer.price}
+                  isOffer={true}
                 />
               </Card>
             );
@@ -170,16 +196,17 @@ function MyOffers() {
         <Modal
           title={`Borrar oferta de ${offerToCancel?.name || "offer"}`}
           visible={visible}
-          cancelText="Cancelar"
+          cancelText="Mantener oferta"
           onCancel={() => setVisibility(false)}
           onOk={() => cancelOffer(offerToCancel)}
           confirmLoading={isPending}
           okText="Borrar oferta"
         >
-          <Text bold>¿Cancelar oferta?</Text>
+          <Text bold>¿Cancelar esta oferta?</Text>
         </Modal>
         <Modal
           title={`Contenido de ${selectedOffer?.name || "offer"}`}
+          width={620}
           visible={visible2}
           onOk={() => setVisibility2(false)}
           onCancel={() => setVisibility2(false)}
@@ -192,12 +219,13 @@ function MyOffers() {
             ingredients={selectedOffer?.ingredients}
             categories={selectedOffer?.categories}
             owner={selectedOffer?.owner}
+            isFungible={selectedOffer?.isFungible}
           />
         </Modal>
       </div>
     );
   } else {
-    return <Spin size="large" />;
+    return <Spin size="large" className="spinner" />;
   }
 }
 

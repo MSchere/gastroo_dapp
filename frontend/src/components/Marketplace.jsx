@@ -1,41 +1,38 @@
 import React from "react";
 import axios from "axios";
 import { getExplorer } from "helpers/networks";
-import { Card, Modal, Tooltip, Spin, Input } from "antd";
+import {
+  Card,
+  Modal,
+  Tooltip,
+  Spin,
+  notification,
+  Input,
+  Row,
+  Menu,
+} from "antd";
 import { CardContent, ImageCard } from "./NFTCard";
 import { VideoContent } from "./VideoContent";
-import Text from "antd/lib/typography/Text";
 import {
   FileSearchOutlined,
   ShoppingCartOutlined,
   CodeSandboxOutlined,
 } from "@ant-design/icons";
+import { ImFileVideo, ImEyeBlocked, ImCoinDollar } from "react-icons/im";
+import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Web3 from "web3";
-const { Meta } = Card;
-
 import MarketplaceContract from "../contracts/Marketplace.json";
 import marketplaceAddress from "../contracts/marketplace-address.json";
-
-const styles = {
-  NFTs: {
-    display: "flex",
-    flexWrap: "wrap",
-    WebkitBoxPack: "start",
-    justifyContent: "flex-start",
-    margin: "0 auto",
-    maxWidth: "1000px",
-    width: "100%",
-    gap: "10px",
-  },
-};
+import { Link } from "react-router-dom";
 
 function Marketplace() {
   const { Moralis, account, chainId } = useMoralis();
   const web3 = new Web3(Moralis.provider);
 
   const [offers, setOffers] = useState([]);
+  const [tokenType, setTokenType] = useState(0);
   const [isLoaded, setLoaded] = useState(false);
   const [visible, setVisibility] = useState(false);
   const [visible2, setVisibility2] = useState(false);
@@ -49,10 +46,11 @@ function Marketplace() {
   );
 
   useEffect(() => {
-    loadOffers(0);
+    loadOffers(tokenType);
   }, []);
 
   async function loadOffers(tokenType) {
+    setTokenType(tokenType);
     try {
       /* create a generic provider and query for unsold market items */
       const data = await contract.methods
@@ -63,9 +61,7 @@ function Marketplace() {
       console.log(data);
       const items = await Promise.all(
         data.map(async (i) => {
-          const tokenUri = await contract.methods
-            .uri(i.item.tokenId)
-            .call({ from: account });
+          const tokenUri = await contract.methods.uri(i.item.tokenId).call();
           if (i.offerId != 0) {
             const meta = await axios.get(tokenUri).catch(function (error) {
               console.log(error);
@@ -80,6 +76,7 @@ function Marketplace() {
               price,
               totalAmount: i.item.totalAmount,
               isPrivate: i.item.isPrivate,
+              isFungible: i.item.isFungible,
               image: meta.data.image,
               video: meta.data.video,
               name: meta.data.name,
@@ -108,15 +105,18 @@ function Marketplace() {
     await contract.methods
       .createMarketSale(offer.offerId, amountToBuy)
       .send({ from: account, value: formattedPrice + fee });
+    openNotification();
     setVisibility(false);
-    loadOffers(0);
+    loadOffers(tokenType);
   }
 
-  async function fetchIPFSDoc(tokenUri) {
-    const url = `https://ipfs.io/ipfs/${tokenUri}`;
-    const response = await fetch(url);
-    return await response.json;
-  }
+  const openNotification = () => {
+    notification["success"]({
+      placement: "bottomLeft",
+      message: "¡Compra completada! 🥳",
+      description: "¡Disfrútala!",
+    });
+  };
 
   const handleTransferClick = (offer) => {
     setOffer(offer);
@@ -134,14 +134,35 @@ function Marketplace() {
 
   if (isLoaded) {
     return (
-      <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
-        <h1>🛒 Mercado de NFTs</h1>
-        <div style={styles.NFTs}>
+      <div>
+        <Menu
+          theme="light"
+          mode="horizontal"
+          defaultSelectedKeys={["GastroVideos"]}
+          className="menu-content"
+          style={{ marginBottom: "15px" }}
+        >
+          <Menu.Item key="GastroVideos">
+            <ImFileVideo />
+            <Link onClick={() => loadOffers(0)}> GastroVideos</Link>
+          </Menu.Item>
+          <Menu.Item key="GastroVideos Privados">
+            <ImEyeBlocked />
+            <Link onClick={() => loadOffers(1)}> GastroVideos Privados</Link>
+          </Menu.Item>
+          <Menu.Item key="GastroTokens">
+            <ImCoinDollar />
+            <Link onClick={() => loadOffers(2)}> GastroTokens</Link>
+          </Menu.Item>
+        </Menu>
+        <div className="NFT-marketplace">
           {offers.map((offer, i) => {
             if (offer != null) {
               return (
                 <Card
+                  className="nft-card"
                   hoverable
+                  bordered={false}
                   actions={[
                     <Tooltip title="Ver en Etherscan">
                       <CodeSandboxOutlined
@@ -168,13 +189,18 @@ function Marketplace() {
                   ]}
                   key={i}
                 >
-                  <ImageCard image={offer.image} />
+                  <ImageCard
+                    image={offer.image}
+                    isPrivate={offer.isPrivate}
+                    isFungible={offer.isFungible}
+                  />
                   <CardContent
                     name={offer.name}
                     description={offer.token_address}
                     amount={offer.amount + " / " + offer.totalAmount}
                     sellerAddress={""}
                     price={offer.price}
+                    isOffer={true}
                   />
                 </Card>
               );
@@ -198,6 +224,7 @@ function Marketplace() {
         <Modal
           title={`Contenido de ${selectedOffer?.name || "offer"}`}
           visible={visible2}
+          width={620}
           onOk={() => setVisibility2(false)}
           onCancel={() => setVisibility2(false)}
           cancelText="Cerrar"
@@ -205,16 +232,19 @@ function Marketplace() {
           <VideoContent
             name={selectedOffer?.name}
             video={selectedOffer?.video}
+            image={selectedOffer?.image}
             description={selectedOffer?.description}
             ingredients={selectedOffer?.ingredients}
             categories={selectedOffer?.categories}
             owner={selectedOffer?.owner}
+            isPrivate={selectedOffer?.isPrivate}
+            isFungible={selectedOffer?.isFungible}
           />
         </Modal>
       </div>
     );
   } else {
-    return <Spin size="large" />;
+    return <Spin size="large" className="spinner" />;
   }
 }
 

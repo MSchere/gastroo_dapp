@@ -22,7 +22,6 @@
 /frontend/coverage
 /frontend/coverage.json
 /frontend/typechain
-/frontend/src/contracts/*.json
 /cache
 
 # dependencies

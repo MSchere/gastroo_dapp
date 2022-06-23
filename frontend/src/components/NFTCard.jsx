@@ -2,26 +2,36 @@ import React from "react";
 import { Avatar, Col, Divider, Image, Row, Space, Typography } from "antd";
 import { MdRemoveRedEye } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
-import { useState } from "react";
+import { ImFileVideo, ImEyeBlocked, ImCoinDollar } from "react-icons/im";
+import { isObject } from "url/util";
 
-export const ImageCard = ({ image }) => {
-  const [visible, setVisible] = useState(false);
+export const ImageCard = ({ image, isPrivate, isFungible }) => {
+  let Icon;
+  if (isPrivate) {
+    Icon = ImEyeBlocked;
+  } else if (isFungible) {
+    Icon = ImCoinDollar;
+  } else {
+    Icon = ImFileVideo;
+  }
   return (
-    <>
+    <div
+      className="image-mask"
+      style={{ position: "relative", top: "0", left: "0" }}
+    >
       <Image
+        style={{
+          position: "relative",
+          zIndex: 0,
+        }}
         src={image}
         alt="Header-Card-Img"
         preview={{
-          visible,
-          src: image,
-          onVisibleChange: (value) => {
-            setVisible(value);
-          },
+          mask: <MdRemoveRedEye style={{ fontSize: 40 }} />,
         }}
-        width={175}
-        onClick={() => setVisible(true)}
       />
-    </>
+      <Icon size={25} style={{ position: "absolute", top: 7, left: 7 }} />
+    </div>
   );
 };
 
@@ -32,18 +42,22 @@ export const CardContent = ({
   amount,
   price,
 }) => {
+  let CurrencyIcon;
+  if (price != "") {
+    CurrencyIcon = FaEthereum;
+  } else {
+    CurrencyIcon = Typography.Text;
+  }
   return (
-    <>
-      <Typography.Title level={4}>{name}</Typography.Title>
-
+    <div>
+      <Typography.Title level={1}>{name}</Typography.Title>
       <Typography.Text>{description}</Typography.Text>
-
       <Row justify="space-between" style={{ marginTop: 15 }}>
-        <Col>
-          <FaEthereum style={{ marginRight: 3 }} />
+        <Col className="align-items-center">
+          <CurrencyIcon style={{ marginRight: 3 }} />
           <Typography.Text strong>{price}</Typography.Text>
         </Col>
-        <Col>
+        <Col className="align-items-center">
           <Typography.Text strong>{amount}</Typography.Text>
         </Col>
       </Row>
@@ -52,7 +66,7 @@ export const CardContent = ({
           <Typography.Text type="secondary">{sellerAddress}</Typography.Text>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 

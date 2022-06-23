@@ -21,14 +21,17 @@ function MenuItems() {
       <Menu.Item key="/marketplace">
         <NavLink to="/marketplace">🛒 Mercado</NavLink>
       </Menu.Item>
-      <Menu.Item key="/createNFT">
-        <NavLink to="/createNFT">🖼️ Creador de NFTs</NavLink>
+      <Menu.Item key="/contentCreator">
+        <NavLink to="/contentCreator">🍲 Cocina</NavLink>
       </Menu.Item>
-      <Menu.Item key="/myNFTs">
-        <NavLink to="/myNFTs">👛 Wallet de NFTs</NavLink>
+      <Menu.Item key="/wallet">
+        <NavLink to="/wallet">🧑‍🍳 Mis contenidos</NavLink>
       </Menu.Item>
       <Menu.Item key="/myOffers">
         <NavLink to="/myOffers">💸 Mis ofertas</NavLink>
+      </Menu.Item>
+      <Menu.Item key="/transactions">
+        <NavLink to="/transactions">🧾 Transacciones</NavLink>
       </Menu.Item>
       <Menu.Item key="/1inch">
         <NavLink to="/1inch">🏦 Exchange</NavLink>
