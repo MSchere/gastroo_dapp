@@ -53,7 +53,8 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         address creator,
         uint256 totalAmount,
         bool isPrivate,
-        bool isFungible
+        bool isFungible,
+        uint256 fees
     );
 
     event MarketOfferCreated(
@@ -173,7 +174,8 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
             msg.sender,
             amount,
             isPrivate,
-            isFungible
+            isFungible,
+            fee
         );
         return newTokenId;
     }

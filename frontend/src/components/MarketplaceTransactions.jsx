@@ -53,7 +53,7 @@ function MarketplaceTransactions() {
           tokenId: i.returnValues.tokenId,
           amount: i.returnValues.totalAmount,
           type: "minteo",
-          price: "",
+          cost: "- " + Moralis.Units.FromWei(i.returnValues.fees),
         };
         key = key + 1;
         return tx;
@@ -81,7 +81,7 @@ function MarketplaceTransactions() {
           tokenId: i.returnValues.tokenId,
           amount: i.returnValues.amount,
           type: "oferta creada",
-          price: Moralis.Units.FromWei(i.returnValues.price),
+          cost: "",
         };
         key = key + 1;
         return tx;
@@ -109,7 +109,7 @@ function MarketplaceTransactions() {
           tokenId: i.returnValues.tokenId,
           amount: i.returnValues.amount,
           type: "oferta cancelada",
-          price: "",
+          cost: "",
         };
         key = key + 1;
         return tx;
@@ -123,6 +123,35 @@ function MarketplaceTransactions() {
       fromBlock: 0,
       toBlock: "latest",
     });
+    const itemBoughtTxs = await Promise.all(
+      data.map(async (i) => {
+        let date;
+        await web3.eth.getBlock(i.blockNumber).then((result) => {
+          date = getDate(result.timestamp);
+        });
+        let tx = {
+          key: key,
+          blockNumber: i.blockNumber,
+          date: date,
+          address: i.returnValues.buyer,
+          tokenId: i.returnValues.tokenId,
+          amount: i.returnValues.amount,
+          type: "tokens comprados",
+          cost: "- " + Moralis.Units.FromWei(i.returnValues.price),
+        };
+        key = key + 1;
+        return tx;
+      }),
+    );
+
+    data = await contract.getPastEvents("MarketItemSold", {
+      filter: {
+        seller: account,
+      }, // Using an array means OR: e.g. 20 or 23
+      fromBlock: 0,
+      toBlock: "latest",
+    });
+
     const itemSoldTxs = await Promise.all(
       data.map(async (i) => {
         let date;
@@ -136,8 +165,8 @@ function MarketplaceTransactions() {
           address: i.returnValues.buyer,
           tokenId: i.returnValues.tokenId,
           amount: i.returnValues.amount,
-          type: "token comprado",
-          price: Moralis.Units.FromWei(i.returnValues.price),
+          type: "tokens vendidos",
+          cost: "+ " + Moralis.Units.FromWei(i.returnValues.price),
         };
         key = key + 1;
         return tx;
@@ -149,6 +178,7 @@ function MarketplaceTransactions() {
     Array.prototype.push.apply(txs, mintTxs);
     Array.prototype.push.apply(txs, offerCreatedTxs);
     Array.prototype.push.apply(txs, offerCancelledTxs);
+    Array.prototype.push.apply(txs, itemBoughtTxs);
     Array.prototype.push.apply(txs, itemSoldTxs);
 
     console.log("TXs:");
@@ -208,9 +238,9 @@ function MarketplaceTransactions() {
       dataIndex: "type",
     },
     {
-      title: "Precio",
-      key: "price",
-      dataIndex: "price",
+      title: "Coste",
+      key: "cost",
+      dataIndex: "cost",
     },
   ];
   if (isLoaded) {
