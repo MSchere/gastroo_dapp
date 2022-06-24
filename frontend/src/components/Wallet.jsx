@@ -234,7 +234,16 @@ function MyNFTs() {
       </div>
     );
   } else {
-    return <Spin size="large" className="spinner" />;
+    return (
+      <div>
+        <Menu className="menu-content" style={{ marginBottom: "15px" }}>
+          <Menu.Item>
+            <h1>🧑‍🍳 Mis contenidos</h1>
+          </Menu.Item>
+        </Menu>
+        <Spin size="large" className="spinner" />
+      </div>
+    );
   }
 }
 

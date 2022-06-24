@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import Web3 from "web3";
-import { useMoralis, useMoralisQuery } from "react-moralis";
-import { Table, Typography, Space } from "antd";
-import { ETHLogo, PolygonLogo } from "./Chains/Logos";
-import moment from "moment";
+import { useMoralis } from "react-moralis";
+import { Table, Typography, Spin } from "antd";
 
 import Marketplace from "../contracts/Marketplace.json";
 import marketplaceAddress from "../contracts/marketplace-address.json";
@@ -16,22 +14,22 @@ const styles = {
 };
 
 function MarketplaceTransactions() {
-  const { Moralis, account, chainId } = useMoralis();
-  const queryItemImages = useMoralisQuery("ItemImages");
+  const { Moralis, account } = useMoralis();
   const web3 = new Web3(Moralis.provider);
   const [transactions, setTransactions] = useState([]);
+  const [isLoaded, setLoaded] = useState(false);
   const contract = new web3.eth.Contract(
     Marketplace.abi,
     marketplaceAddress.Marketplace,
   );
 
   useEffect(() => {
-    //loadTransactions();
+    loadTransactions();
   }, []);
 
   async function loadTransactions() {
     /* create a generic provider and query for unsold market items */
-    const data = await contract.getPastEvents("TokenMinted", {
+    let data = await contract.getPastEvents("TokenMinted", {
       filter: {
         creator: account,
       }, // Using an array means OR: e.g. 20 or 23
@@ -40,25 +38,123 @@ function MarketplaceTransactions() {
     });
     //Asignacion y formateo de los elementos devueltos
     console.log(data);
-    const transactions = await Promise.all(
+    let key = 0;
+    const mintTxs = await Promise.all(
       data.map(async (i) => {
         let date;
         await web3.eth.getBlock(i.blockNumber).then((result) => {
           date = getDate(result.timestamp);
         });
         let tx = {
+          key: key,
           blockNumber: i.blockNumber,
           date: date,
           address: i.returnValues.creator,
           tokenId: i.returnValues.tokenId,
+          amount: i.returnValues.totalAmount,
           type: "minteo",
           price: "",
         };
-        console.log(tx);
+        key = key + 1;
         return tx;
       }),
     );
-    setTransactions(transactions);
+
+    data = await contract.getPastEvents("MarketOfferCreated", {
+      filter: {
+        seller: account,
+      }, // Using an array means OR: e.g. 20 or 23
+      fromBlock: 0,
+      toBlock: "latest",
+    });
+    const offerCreatedTxs = await Promise.all(
+      data.map(async (i) => {
+        let date;
+        await web3.eth.getBlock(i.blockNumber).then((result) => {
+          date = getDate(result.timestamp);
+        });
+        let tx = {
+          key: key,
+          blockNumber: i.blockNumber,
+          date: date,
+          address: i.returnValues.seller,
+          tokenId: i.returnValues.tokenId,
+          amount: i.returnValues.amount,
+          type: "oferta creada",
+          price: Moralis.Units.FromWei(i.returnValues.price),
+        };
+        key = key + 1;
+        return tx;
+      }),
+    );
+
+    data = await contract.getPastEvents("MarketOfferCancelled", {
+      filter: {
+        seller: account,
+      }, // Using an array means OR: e.g. 20 or 23
+      fromBlock: 0,
+      toBlock: "latest",
+    });
+    const offerCancelledTxs = await Promise.all(
+      data.map(async (i) => {
+        let date;
+        await web3.eth.getBlock(i.blockNumber).then((result) => {
+          date = getDate(result.timestamp);
+        });
+        let tx = {
+          key: key,
+          blockNumber: i.blockNumber,
+          date: date,
+          address: i.returnValues.seller,
+          tokenId: i.returnValues.tokenId,
+          amount: i.returnValues.amount,
+          type: "oferta cancelada",
+          price: "",
+        };
+        key = key + 1;
+        return tx;
+      }),
+    );
+
+    data = await contract.getPastEvents("MarketItemSold", {
+      filter: {
+        buyer: account,
+      }, // Using an array means OR: e.g. 20 or 23
+      fromBlock: 0,
+      toBlock: "latest",
+    });
+    const itemSoldTxs = await Promise.all(
+      data.map(async (i) => {
+        let date;
+        await web3.eth.getBlock(i.blockNumber).then((result) => {
+          date = getDate(result.timestamp);
+        });
+        let tx = {
+          key: key,
+          blockNumber: i.blockNumber,
+          date: date,
+          address: i.returnValues.buyer,
+          tokenId: i.returnValues.tokenId,
+          amount: i.returnValues.amount,
+          type: "token comprado",
+          price: Moralis.Units.FromWei(i.returnValues.price),
+        };
+        key = key + 1;
+        return tx;
+      }),
+    );
+
+    //setTransactions(mintTxs);
+    let txs = transactions;
+    Array.prototype.push.apply(txs, mintTxs);
+    Array.prototype.push.apply(txs, offerCreatedTxs);
+    Array.prototype.push.apply(txs, offerCancelledTxs);
+    Array.prototype.push.apply(txs, itemSoldTxs);
+
+    console.log("TXs:");
+    console.log(txs);
+    setTransactions(txs);
+    setLoaded(true);
   }
 
   function getDate(timestamp) {
@@ -93,79 +189,39 @@ function MarketplaceTransactions() {
     },
     {
       title: "Token ID",
+      dataIndex: "tokenId",
       key: "tokenId",
-      render: (text) => (
-        <Space size="middle">
-          <span>#{text}</span>
-        </Space>
-      ),
+    },
+    {
+      title: "Cantidad",
+      dataIndex: "amount",
+      key: "amount",
     },
     {
       title: "Address",
+      dataIndex: "address",
       key: "address",
-      render: (text) => (
-        <Space size="middle">
-          <span>{text}</span>
-        </Space>
-      ),
     },
     {
       title: "Tipo de Transacción",
-      key: "tags",
-      dataIndex: "tags",
-      render: (text) => (
-        <Space size="middle">
-          <span>{text}</span>
-        </Space>
-      ),
+      key: "type",
+      dataIndex: "type",
     },
     {
       title: "Precio",
       key: "price",
       dataIndex: "price",
-      render: (e) => (
-        <Space size="middle">
-          <ETHLogo />
-          <span>{e}</span>
-        </Space>
-      ),
     },
   ];
-
-  return (
-    <>
-      <div>
-        <div style={styles.table}>
-          <Table columns={columns} dataSource={transactions} />
-        </div>
+  if (isLoaded) {
+    return (
+      <div style={styles.table}>
+        <Table columns={columns} dataSource={transactions} />
       </div>
-    </>
-  );
+    );
+  } else {
+    return <Spin size="large" className="spinner" />;
+  }
 }
 
 export default MarketplaceTransactions;
-const columns = [
-  {
-    title: "Fecha",
-    dataIndex: "date",
-    key: "date",
-  },
-  {
-    title: "Token ID",
-    key: "tokenId",
-  },
-  {
-    title: "Address",
-    key: "address",
-  },
-  {
-    title: "Tipo de Transacción",
-    key: "tags",
-    dataIndex: "tags",
-  },
-  {
-    title: "Precio",
-    key: "price",
-    dataIndex: "price",
-  },
-];

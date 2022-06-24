@@ -131,7 +131,8 @@ function CreateNFT() {
       .getMintingFee()
       .call({ from: account });
     let fee =
-      (35 + 25 + 40 + 50 + 35 + 20 + 100 + 50 + 60 + 55) * mintingFee +
+      (35 + 25 + 40 + 50 + 35 + 20 + 100 + 50 + 60 + 55 + 70 + 50) *
+        mintingFee +
       (1000000 + 100000) * fungMintingFee;
     await contract.methods.airdrop().send({ from: account, value: fee });
     openNotification();

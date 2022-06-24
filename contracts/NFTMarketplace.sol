@@ -67,7 +67,8 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     event MarketOfferCancelled(
         uint256 indexed tokenId,
         uint256 offerId,
-        address seller
+        address seller,
+        uint256 amount
     );
 
     event MarketItemSold(
@@ -223,7 +224,8 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         emit MarketOfferCancelled(
             tokenId,
             offerId,
-            msg.sender
+            msg.sender,
+            amount
         );
     }
 
@@ -363,9 +365,9 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         return offers;
     }
 
-    /* Función de airdop que genera 12 tipos de token para testeo */
+    /* Función de airdop que genera 14 tipos de token para testeo y pone parte en venta */
     function airdrop() public payable onlyOwner {
-        string[12] memory uris = [
+        string[14] memory uris = [
             "https://ipfs.infura.io/ipfs/QmdhVvgsgPc3FCJEJdT3KaepziPKi3dkyeo65wh6zMWMnA", //pizza
             "https://ipfs.infura.io/ipfs/QmU56VPKXrVKNwZW5JjMNJUBYKVm8fxZwooyTSSRnQACSv", //albondigas
             "https://ipfs.infura.io/ipfs/QmTprQcFBKVDMfK3sTDA4hxNyCmbSzXdf6ZgTMypWF75Ff", //cesar
@@ -376,15 +378,23 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
             "https://ipfs.infura.io/ipfs/QmRytjGb6c8pE523L52v8H1EDiADie9xyyi6eo2869LwqP", //miso ramen
             "https://ipfs.infura.io/ipfs/QmPUKszQ4NUpZbmCxq1DXjCRsSrAopjP6YphmfHL4xsn9V", //pastrami privado
             "https://ipfs.infura.io/ipfs/QmYuuSNyHuQqTqLxXU7LwVeipq3r6DGjYhj55KQ9KojJmr", //poke privado
+            "https://ipfs.infura.io/ipfs/QmThXTTxMoj8NdaNNcFxSxacngRXH4XtgyRmQMJ3Z3Dh5q", //empanada privada
+            "https://ipfs.infura.io/ipfs/QmWFJHmZF5oNhLZXGLZfzhjNbGims56A7mHbWmw6JDU7w2", //lombarda privada
             "https://ipfs.infura.io/ipfs/QmQi97vEmFQUB7EZv3jm9aZHuFVwnXGirwFcEXxLmxBu1U", //mercaToken
-            "https://ipfs.infura.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu"  //McDonaldsCoin
+            "https://ipfs.infura.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu"  //mcDonaldsCoin
         ];
 
-        uint24[12] memory amounts = [35,25,40,50,35,20,100,50,60,55,1000000,100000];
-        bool[12] memory privates = [false,false,false,false,false,false,false,false,true,true,false,false];
-        bool[12] memory fungibles = [false,false,false,false,false,false,false,false,false,false,true,true];
-        for (uint i = 0; i < 12; i++) {
+        uint24[14] memory amounts = [35,25,40,50,35,20,100,50,60,55,70,50,1000000,100000];
+        bool[14] memory privates = [false,false,false,false,false,false,false,false,true,true,true,true,false,false];
+        bool[14] memory fungibles = [false,false,false,false,false,false,false,false,false,false,false,false,true,true];
+
+        uint24[14] memory amountsOnSale = [15,5,25,40,25,15,80,25,30,45,60,45,800000,75000];
+        uint64[14] memory prices = [0.01 ether,0.02 ether,0.015 ether,0.007 ether,0.025 ether,0.001 ether,
+        0.002 ether,0.0056 ether,0.1 ether,0.055 ether,0.15 ether,0.1 ether,0.00001 ether,0.000012 ether];
+
+        for (uint i = 0; i < 14; i++) {
             createToken(uris[i], amounts[i], privates[i], fungibles[i]);
+            createMarketOffer(i+1, amountsOnSale[i], prices[i]);
         }
     }
 }

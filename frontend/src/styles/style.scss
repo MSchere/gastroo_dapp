@@ -236,3 +236,23 @@ $white: hsl(0, 0%, 100%);
     overflow: hidden;
   }
 }
+
+.ant-table {
+  font-family: Roboto, sans-serif;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* row tags */
+.ant-table-thead > tr > th {
+  background-color: white;
+  text-align: center;
+  height: 10px;
+  padding: 12px;
+}
+
+/* row data */
+.ant-table-tbody > tr > td {
+  text-align: center;
+}
+

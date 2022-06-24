@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import axios from "axios";
 import { getExplorer } from "helpers/networks";
 import {
@@ -45,56 +45,63 @@ function Marketplace() {
     marketplaceAddress.Marketplace,
   );
 
+  const loadOffers = useCallback(async (tokenType) => {
+    if (!isLoaded) {
+      try {
+        /* create a generic provider and query for unsold market items */
+        const data = await contract.methods
+          .fetchMarketOffers(tokenType)
+          .call({ from: account });
+
+        //Asignacion y formateo de los elementos devueltos
+        console.log(data);
+        const items = await Promise.all(
+          data.map(async (i) => {
+            const tokenUri = await contract.methods.uri(i.item.tokenId).call();
+            if (i.offerId != 0) {
+              const meta = await axios.get(tokenUri).catch(function (error) {
+                console.log(error);
+              });
+              let price = Moralis.Units.FromWei(i.price.toString());
+              let item = {
+                offerId: i.offerId,
+                tokenId: i.item.tokenId,
+                seller: i.seller,
+                owner: i.owner,
+                amount: i.amount,
+                price,
+                totalAmount: i.item.totalAmount,
+                isPrivate: i.item.isPrivate,
+                isFungible: i.item.isFungible,
+                image: meta.data.image,
+                video: meta.data.video,
+                name: meta.data.name,
+                description: meta.data.description,
+                ingredients: meta.data.ingredients,
+                categories: meta.data.categories,
+              };
+              console.log(item);
+              return item;
+            }
+          }),
+        );
+        setOffers(items);
+        setLoaded(true);
+      } catch (error) {
+        console.log("Error loading web3js");
+        console.log(error);
+      }
+    }
+  });
+
   useEffect(() => {
     loadOffers(tokenType);
-  }, []);
+  }, [loadOffers]);
 
-  async function loadOffers(tokenType) {
-    setTokenType(tokenType);
-    try {
-      /* create a generic provider and query for unsold market items */
-      const data = await contract.methods
-        .fetchMarketOffers(tokenType)
-        .call({ from: account });
-
-      //Asignacion y formateo de los elementos devueltos
-      console.log(data);
-      const items = await Promise.all(
-        data.map(async (i) => {
-          const tokenUri = await contract.methods.uri(i.item.tokenId).call();
-          if (i.offerId != 0) {
-            const meta = await axios.get(tokenUri).catch(function (error) {
-              console.log(error);
-            });
-            let price = Moralis.Units.FromWei(i.price.toString());
-            let item = {
-              offerId: i.offerId,
-              tokenId: i.item.tokenId,
-              seller: i.seller,
-              owner: i.owner,
-              amount: i.amount,
-              price,
-              totalAmount: i.item.totalAmount,
-              isPrivate: i.item.isPrivate,
-              isFungible: i.item.isFungible,
-              image: meta.data.image,
-              video: meta.data.video,
-              name: meta.data.name,
-              description: meta.data.description,
-              ingredients: meta.data.ingredients,
-              categories: meta.data.categories,
-            };
-            console.log(item);
-            return item;
-          }
-        }),
-      );
-      setOffers(items);
-      setLoaded(true);
-    } catch (error) {
-      console.log("Error loading web3js");
-      console.log(error);
-    }
+  async function reloadOffers(type) {
+    setLoaded(false);
+    setTokenType(type);
+    loadOffers(tokenType);
   }
 
   async function buyNft(offer, amountToBuy) {
@@ -107,7 +114,7 @@ function Marketplace() {
       .send({ from: account, value: formattedPrice + fee });
     openNotification();
     setVisibility(false);
-    loadOffers(tokenType);
+    reloadOffers(tokenType);
   }
 
   const openNotification = () => {
@@ -144,15 +151,15 @@ function Marketplace() {
         >
           <Menu.Item key="GastroVideos">
             <ImFileVideo />
-            <Link onClick={() => loadOffers(0)}> GastroVideos</Link>
+            <Link onClick={() => reloadOffers(0)}> GastroVideos</Link>
           </Menu.Item>
           <Menu.Item key="GastroVideos Privados">
             <ImEyeBlocked />
-            <Link onClick={() => loadOffers(1)}> GastroVideos Privados</Link>
+            <Link onClick={() => reloadOffers(1)}> GastroVideos Privados</Link>
           </Menu.Item>
           <Menu.Item key="GastroTokens">
             <ImCoinDollar />
-            <Link onClick={() => loadOffers(2)}> GastroTokens</Link>
+            <Link onClick={() => reloadOffers(2)}> GastroTokens</Link>
           </Menu.Item>
         </Menu>
         <div className="NFT-marketplace">
@@ -244,7 +251,32 @@ function Marketplace() {
       </div>
     );
   } else {
-    return <Spin size="large" className="spinner" />;
+    return (
+      <div>
+        <Menu
+          theme="light"
+          mode="horizontal"
+          defaultSelectedKeys={["GastroVideos"]}
+          disabledOverflow={true}
+          className="menu-content"
+          style={{ marginBottom: "15px" }}
+        >
+          <Menu.Item key="GastroVideos">
+            <ImFileVideo />
+            <Link> GastroVideos</Link>
+          </Menu.Item>
+          <Menu.Item key="GastroVideos Privados">
+            <ImEyeBlocked />
+            <Link> GastroVideos Privados</Link>
+          </Menu.Item>
+          <Menu.Item key="GastroTokens">
+            <ImCoinDollar />
+            <Link> GastroTokens</Link>
+          </Menu.Item>
+        </Menu>
+        <Spin size="large" className="spinner" />
+      </div>
+    );
   }
 }
 

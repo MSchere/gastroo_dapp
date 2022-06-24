@@ -3,7 +3,7 @@ import { Avatar, Col, Divider, Image, Row, Space, Typography } from "antd";
 import { MdRemoveRedEye } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 import { ImFileVideo, ImEyeBlocked, ImCoinDollar } from "react-icons/im";
-import { isObject } from "url/util";
+import { ETHLogo, PolygonLogo } from "./Chains/Logos";
 
 export const ImageCard = ({ image, isPrivate, isFungible }) => {
   let Icon;
@@ -54,7 +54,7 @@ export const CardContent = ({
       <Typography.Text>{description}</Typography.Text>
       <Row justify="space-between" style={{ marginTop: 15 }}>
         <Col className="align-items-center">
-          <CurrencyIcon style={{ marginRight: 3 }} />
+          <CurrencyIcon style={{ marginRight: 3, marginBottom: 2 }} />
           <Typography.Text strong>{price}</Typography.Text>
         </Col>
         <Col className="align-items-center">
