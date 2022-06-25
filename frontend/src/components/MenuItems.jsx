@@ -1,7 +1,12 @@
 import { useLocation } from "react-router";
-import { Menu } from "antd";
+import { Menu, Divider, Space } from "antd";
 import { NavLink } from "react-router-dom";
-
+import {
+  ShoppingCartOutlined,
+  TransactionOutlined,
+  SwapOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
 function MenuItems() {
   const { pathname } = useLocation();
 
@@ -18,23 +23,36 @@ function MenuItems() {
       }}
       defaultSelectedKeys={[pathname]}
     >
-      <Menu.Item key="/marketplace">
-        <NavLink to="/marketplace">🛒 Mercado</NavLink>
+      <Menu.Item
+        key="/marketplace"
+        style={{ fontSize: 25 }}
+        icon={<ShoppingCartOutlined style={{ fontSize: 25 }} />}
+      >
+        <NavLink to="/marketplace">Mercado</NavLink>
       </Menu.Item>
-      <Menu.Item key="/contentCreator">
-        <NavLink to="/contentCreator">🍲 Cocina</NavLink>
+      <Menu.SubMenu
+        title="Mis contenidos 🔻"
+        style={{ fontSize: 25 }}
+        icon={<VideoCameraOutlined style={{ fontSize: 25 }} />}
+      >
+        <Menu.Item key="/wallet">
+          <NavLink to="/wallet">👛 Mi cartera</NavLink>
+        </Menu.Item>
+        <Menu.Item key="/myOffers">
+          <NavLink to="/myOffers">💸 Mis ofertas</NavLink>
+        </Menu.Item>
+        <Menu.Item key="/contentCreator">
+          <NavLink to="/contentCreator">🍲 Creador de contenido</NavLink>
+        </Menu.Item>
+      </Menu.SubMenu>
+      <Menu.Item
+        key="/transactions"
+        icon={<TransactionOutlined style={{ fontSize: 15 }} />}
+      >
+        <NavLink to="/transactions">Transacciones</NavLink>
       </Menu.Item>
-      <Menu.Item key="/wallet">
-        <NavLink to="/wallet">🧑‍🍳 Mis contenidos</NavLink>
-      </Menu.Item>
-      <Menu.Item key="/myOffers">
-        <NavLink to="/myOffers">💸 Mis ofertas</NavLink>
-      </Menu.Item>
-      <Menu.Item key="/transactions">
-        <NavLink to="/transactions">🧾 Transacciones</NavLink>
-      </Menu.Item>
-      <Menu.Item key="/1inch">
-        <NavLink to="/1inch">🏦 Exchange</NavLink>
+      <Menu.Item key="/1inch" icon={<SwapOutlined style={{ fontSize: 15 }} />}>
+        <NavLink to="/1inch">Exchange</NavLink>
       </Menu.Item>
     </Menu>
   );

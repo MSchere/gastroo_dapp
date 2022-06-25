@@ -1,25 +1,15 @@
 import React, { useCallback } from "react";
 import axios from "axios";
 import { getExplorer } from "helpers/networks";
-import {
-  Card,
-  Modal,
-  Tooltip,
-  Spin,
-  notification,
-  Input,
-  Row,
-  Menu,
-} from "antd";
+import { Card, Modal, Spin, notification, Input, Menu, Button } from "antd";
 import { CardContent, ImageCard } from "./NFTCard";
 import { VideoContent } from "./VideoContent";
 import {
-  FileSearchOutlined,
   ShoppingCartOutlined,
-  CodeSandboxOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  DollarOutlined,
 } from "@ant-design/icons";
-import { ImFileVideo, ImEyeBlocked, ImCoinDollar } from "react-icons/im";
-import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Web3 from "web3";
@@ -66,6 +56,7 @@ function Marketplace() {
               let item = {
                 offerId: i.offerId,
                 tokenId: i.item.tokenId,
+                creator: i.item.creator,
                 seller: i.seller,
                 owner: i.owner,
                 amount: i.amount,
@@ -145,20 +136,26 @@ function Marketplace() {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["GastroVideos"]}
+          defaultSelectedKeys={["GastroVideos Públicos"]}
           className="menu-content"
           style={{ marginBottom: "15px" }}
         >
-          <Menu.Item key="GastroVideos">
-            <ImFileVideo />
-            <Link onClick={() => reloadOffers(0)}> GastroVideos</Link>
+          <Menu.Item
+            key="GastroVideos Públicos"
+            icon={<EyeOutlined style={{ fontSize: 25 }} />}
+          >
+            <Link onClick={() => reloadOffers(0)}> GastroVideos Públicos</Link>
           </Menu.Item>
-          <Menu.Item key="GastroVideos Privados">
-            <ImEyeBlocked />
+          <Menu.Item
+            key="GastroVideos Privados"
+            icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
+          >
             <Link onClick={() => reloadOffers(1)}> GastroVideos Privados</Link>
           </Menu.Item>
-          <Menu.Item key="GastroTokens">
-            <ImCoinDollar />
+          <Menu.Item
+            key="GastroTokens"
+            icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
+          >
             <Link onClick={() => reloadOffers(2)}> GastroTokens</Link>
           </Menu.Item>
         </Menu>
@@ -166,41 +163,14 @@ function Marketplace() {
           {offers.map((offer, i) => {
             if (offer != null) {
               return (
-                <Card
-                  className="nft-card"
-                  hoverable
-                  bordered={false}
-                  actions={[
-                    <Tooltip title="Ver en Etherscan">
-                      <CodeSandboxOutlined
-                        onClick={() =>
-                          window.open(
-                            `${getExplorer(chainId)}address/${
-                              offer.item.token_address
-                            }`,
-                            "_blank",
-                          )
-                        }
-                      />
-                    </Tooltip>,
-                    <Tooltip title="Ver contenido">
-                      <FileSearchOutlined
-                        onClick={() => handleTransferClick2(offer)}
-                      />
-                    </Tooltip>,
-                    <Tooltip title="Comprar NFT">
-                      <ShoppingCartOutlined
-                        onClick={() => handleTransferClick(offer)}
-                      />
-                    </Tooltip>,
-                  ]}
-                  key={i}
-                >
-                  <ImageCard
-                    image={offer.image}
-                    isPrivate={offer.isPrivate}
-                    isFungible={offer.isFungible}
-                  />
+                <Card className="nft-card" hoverable bordered={false} key={i}>
+                  <div onClick={() => handleTransferClick2(offer)}>
+                    <ImageCard
+                      image={offer.image}
+                      isPrivate={offer.isPrivate}
+                      isFungible={offer.isFungible}
+                    />
+                  </div>
                   <CardContent
                     name={offer.name}
                     description={offer.token_address}
@@ -209,6 +179,18 @@ function Marketplace() {
                     price={offer.price}
                     isOffer={true}
                   />
+                  <Button
+                    type="primary"
+                    size="large"
+                    icon={<ShoppingCartOutlined />}
+                    onClick={() => handleTransferClick(offer)}
+                    style={{
+                      width: "100%",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    ¡Comprar!
+                  </Button>
                 </Card>
               );
             }
@@ -243,7 +225,7 @@ function Marketplace() {
             description={selectedOffer?.description}
             ingredients={selectedOffer?.ingredients}
             categories={selectedOffer?.categories}
-            owner={selectedOffer?.owner}
+            creator={selectedOffer?.creator}
             isPrivate={selectedOffer?.isPrivate}
             isFungible={selectedOffer?.isFungible}
           />
@@ -256,21 +238,27 @@ function Marketplace() {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["GastroVideos"]}
+          defaultSelectedKeys={["GastroVideos Públicos"]}
           disabledOverflow={true}
           className="menu-content"
           style={{ marginBottom: "15px" }}
         >
-          <Menu.Item key="GastroVideos">
-            <ImFileVideo />
-            <Link> GastroVideos</Link>
+          <Menu.Item
+            key="GastroVideos Públicos"
+            icon={<EyeOutlined style={{ fontSize: 25 }} />}
+          >
+            <Link> GastroVideos Públicos</Link>
           </Menu.Item>
-          <Menu.Item key="GastroVideos Privados">
-            <ImEyeBlocked />
+          <Menu.Item
+            key="GastroVideos Privados"
+            icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
+          >
             <Link> GastroVideos Privados</Link>
           </Menu.Item>
-          <Menu.Item key="GastroTokens">
-            <ImCoinDollar />
+          <Menu.Item
+            key="GastroTokens"
+            icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
+          >
             <Link> GastroTokens</Link>
           </Menu.Item>
         </Menu>

@@ -1,12 +1,16 @@
+@import "~antd/dist/antd.variable.min.css";
+
 $soft-blue: hsl(215, 51%, 70%);
 $cyan: hsl(164, 71%, 44%);
 $white: hsl(0, 0%, 100%);
+$gastroo: hsl(44, 100%, 50%);
+$gastroo-hover: hsl(52, 100%, 50%);
 
 .header {
   position: fixed;
   z-index: 1;
   width: 100%;
-  background: #fff;
+  background: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,15 +18,7 @@ $white: hsl(0, 0%, 100%);
   border-bottom: 2px solid rgba(0, 0, 0, 0.06);
   padding: 0 10px;
   box-shadow: 3px 5px 35px hsl(0, 0%, 55%);
-}
 
-.content {
-  display: flex;
-  justify-content: center;
-  font-family: Roboto, sans-serif;
-  color: #10122c;
-  //margin-top: 130px;
-  //padding: 10px;
 }
 
 .header-right {
@@ -31,6 +27,14 @@ $white: hsl(0, 0%, 100%);
   align-items: center;
   font-size: 15px;
   font-weight: 600;
+}
+.content {
+  display: flex;
+  justify-content: center;
+  font-family: Roboto, sans-serif;
+  color: #10122c;
+  //margin-top: 130px;
+  //padding: 10px;
 }
 
 .mx-auto {
@@ -105,10 +109,9 @@ $white: hsl(0, 0%, 100%);
     left: 50%;
 }
 
-
 .menu-content {
     display: flex;
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 500;
     width: 100%;
     justify-content: center;
@@ -120,7 +123,7 @@ $white: hsl(0, 0%, 100%);
   margin-right: auto;
   background-color: white;
   top: 300px;
-  height: 46px;
+  height: 48px;
   max-height: 50px;
   left: 0;
   right: 0;
@@ -144,7 +147,10 @@ $white: hsl(0, 0%, 100%);
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-start;
+  margin-left: 25px;
+  margin-right: 25px;
   gap: 20px;
 }
 
@@ -160,8 +166,8 @@ $white: hsl(0, 0%, 100%);
   font-family: 'Roboto', sans-serif;
   border-radius: 15px;
   box-shadow: 5px 10px 35px hsl(0, 0%, 55%);
-  width: 250px;
-  height: 398px;
+  width: 275px;
+  height: 400px;
   font-size: 18px;
 
   .ant-card-body {
@@ -176,8 +182,8 @@ $white: hsl(0, 0%, 100%);
 
     .ant-image-img {
       object-fit: cover;
-      width: 225px;
-      height: 225px;
+      width: 250px;
+      height: 250px;
       border-radius: 10px;
     }
 
@@ -187,7 +193,7 @@ $white: hsl(0, 0%, 100%);
     }
 
     h1 {
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .link {
@@ -220,7 +226,7 @@ $white: hsl(0, 0%, 100%);
 
 .ant-modal {
   border-radius: 15px;
-  box-shadow: 5px 10px 35px hsl(0, 0%, 55%);
+  //box-shadow: 5px 10px 35px hsl(0, 0%, 55%);
   font-family: 'Roboto', sans-serif;
   font-size: 18px;
 
@@ -235,6 +241,15 @@ $white: hsl(0, 0%, 100%);
     border-radius: 10px;
     overflow: hidden;
   }
+}
+
+.ant-modal-content {
+  overflow: auto;
+  border-radius: 1rem;
+}
+
+.ant-modal-header {
+  background-color: $gastroo;
 }
 
 .ant-table {
@@ -256,3 +271,20 @@ $white: hsl(0, 0%, 100%);
   text-align: center;
 }
 
+// .ant-btn-primary {
+//   background-color: $gastroo;
+//   border-color: $gastroo;
+//   &:hover {
+//     background-color: $gastroo-hover;
+//     border-color: $gastroo-hover;
+//   }
+// }
+
+
+.dot {
+  height: 21px;
+  width: 21px;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+}

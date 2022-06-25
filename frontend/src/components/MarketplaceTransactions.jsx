@@ -178,7 +178,7 @@ function MarketplaceTransactions() {
     Array.prototype.push.apply(txs, mintTxs);
     Array.prototype.push.apply(txs, offerCreatedTxs);
     Array.prototype.push.apply(txs, offerCancelledTxs);
-    Array.prototype.push.apply(txs, itemBoughtTxs);
+    Array.prototype.push.apply(txs, itemSoldTxs);
     Array.prototype.push.apply(txs, itemSoldTxs);
 
     console.log("TXs:");

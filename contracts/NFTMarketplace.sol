@@ -369,7 +369,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
 
     /* Función de airdop que genera 14 tipos de token para testeo y pone parte en venta */
     function airdrop() public payable onlyOwner {
-        string[14] memory uris = [
+        string[15] memory uris = [
             "https://ipfs.infura.io/ipfs/QmdhVvgsgPc3FCJEJdT3KaepziPKi3dkyeo65wh6zMWMnA", //pizza
             "https://ipfs.infura.io/ipfs/QmU56VPKXrVKNwZW5JjMNJUBYKVm8fxZwooyTSSRnQACSv", //albondigas
             "https://ipfs.infura.io/ipfs/QmTprQcFBKVDMfK3sTDA4hxNyCmbSzXdf6ZgTMypWF75Ff", //cesar
@@ -383,18 +383,19 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
             "https://ipfs.infura.io/ipfs/QmThXTTxMoj8NdaNNcFxSxacngRXH4XtgyRmQMJ3Z3Dh5q", //empanada privada
             "https://ipfs.infura.io/ipfs/QmWFJHmZF5oNhLZXGLZfzhjNbGims56A7mHbWmw6JDU7w2", //lombarda privada
             "https://ipfs.infura.io/ipfs/QmQi97vEmFQUB7EZv3jm9aZHuFVwnXGirwFcEXxLmxBu1U", //mercaToken
-            "https://ipfs.infura.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu"  //mcDonaldsCoin
+            "https://ipfs.infura.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu", //mcDonaldsCoin
+            "https://ipfs.infura.io/ipfs/QmSUVazUcpHVDNviNzsfuCtkWqt2DeqJ2pV8DjmzSzev5u"  //gastrooToken
         ];
 
-        uint24[14] memory amounts = [35,25,40,50,35,20,100,50,60,55,70,50,1000000,100000];
-        bool[14] memory privates = [false,false,false,false,false,false,false,false,true,true,true,true,false,false];
-        bool[14] memory fungibles = [false,false,false,false,false,false,false,false,false,false,false,false,true,true];
+        uint24[15] memory amounts = [35,25,40,50,35,20,100,50,60,55,70,50,1000000,100000, 1000000];
+        bool[15] memory privates = [false,false,false,false,false,false,false,false,true,true,true,true,false,false,false];
+        bool[15] memory fungibles = [false,false,false,false,false,false,false,false,false,false,false,false,true,true,true];
 
-        uint24[14] memory amountsOnSale = [15,5,25,40,25,15,80,25,30,45,60,45,800000,75000];
-        uint64[14] memory prices = [0.01 ether,0.02 ether,0.015 ether,0.007 ether,0.025 ether,0.001 ether,
-        0.002 ether,0.0056 ether,0.1 ether,0.055 ether,0.15 ether,0.1 ether,0.00001 ether,0.000012 ether];
+        uint24[15] memory amountsOnSale = [15,5,25,40,25,15,80,25,30,45,60,45,800000,75000,900000];
+        uint64[15] memory prices = [0.01 ether,0.02 ether,0.015 ether,0.007 ether,0.025 ether,0.001 ether,
+        0.002 ether,0.0056 ether,0.1 ether,0.055 ether,0.15 ether,0.1 ether,0.00001 ether,0.000012 ether,0.00001 ether];
 
-        for (uint i = 0; i < 14; i++) {
+        for (uint i = 0; i < 15; i++) {
             createToken(uris[i], amounts[i], privates[i], fungibles[i]);
             createMarketOffer(i+1, amountsOnSale[i], prices[i]);
         }

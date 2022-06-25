@@ -2,15 +2,11 @@ import React from "react";
 import axios from "axios";
 import crypto from "crypto";
 import { getExplorer } from "helpers/networks";
-import { Card, Modal, Tooltip, Menu, Spin, notification } from "antd";
+import { Card, Modal, Button, Menu, Spin, notification } from "antd";
 import { CardContent, ImageCard } from "./NFTCard";
 import { VideoContent } from "./VideoContent";
 import Text from "antd/lib/typography/Text";
-import {
-  CloseSquareOutlined,
-  FileSearchOutlined,
-  CodeSandboxOutlined,
-} from "@ant-design/icons";
+import { CloseCircleOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import Web3 from "web3";
@@ -62,6 +58,7 @@ function MyOffers() {
             tokenId: i.item.tokenId,
             seller: i.seller,
             owner: i.owner,
+            creator: i.creator,
             amount: i.amount,
             price,
             totalAmount: i.item.totalAmount,
@@ -79,6 +76,7 @@ function MyOffers() {
             tokenId: i.item.tokenId,
             seller: i.seller,
             owner: i.owner,
+            creator: i.creator,
             amount: i.amount,
             price,
             totalAmount: i.item.totalAmount,
@@ -146,41 +144,14 @@ function MyOffers() {
         <div className="NFT-wallet">
           {offers.map((offer, i) => {
             return (
-              <Card
-                className="nft-card"
-                hoverable
-                bordered={false}
-                actions={[
-                  <Tooltip title="Ver en Etherscan">
-                    <CodeSandboxOutlined
-                      onClick={() =>
-                        window.open(
-                          `${getExplorer(chainId)}address/${
-                            offer.item.token_address
-                          }`,
-                          "_blank",
-                        )
-                      }
-                    />
-                  </Tooltip>,
-                  <Tooltip title="Ver contenido">
-                    <FileSearchOutlined
-                      onClick={() => handleTransferClick2(offer)}
-                    />
-                  </Tooltip>,
-                  <Tooltip title="Cancelar oferta">
-                    <CloseSquareOutlined
-                      onClick={() => handleTransferClick(offer)}
-                    />
-                  </Tooltip>,
-                ]}
-                key={i}
-              >
-                <ImageCard
-                  image={offer.image}
-                  isPrivate={offer.isPrivate}
-                  isFungible={offer.isFungible}
-                />{" "}
+              <Card className="nft-card" hoverable bordered={false} key={i}>
+                <div onClick={() => handleTransferClick2(offer)}>
+                  <ImageCard
+                    image={offer.image}
+                    isPrivate={offer.isPrivate}
+                    isFungible={offer.isFungible}
+                  />
+                </div>
                 <CardContent
                   name={offer.name}
                   description={offer.token_address}
@@ -189,6 +160,18 @@ function MyOffers() {
                   price={offer.price}
                   isOffer={true}
                 />
+                <Button
+                  type="primary"
+                  size="large"
+                  icon={<CloseCircleOutlined />}
+                  onClick={() => handleTransferClick(offer)}
+                  style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                  }}
+                >
+                  Cancelar oferta
+                </Button>
               </Card>
             );
           })}
@@ -219,6 +202,7 @@ function MyOffers() {
             ingredients={selectedOffer?.ingredients}
             categories={selectedOffer?.categories}
             owner={selectedOffer?.owner}
+            creator={selectedOffer?.creator}
             isFungible={selectedOffer?.isFungible}
           />
         </Modal>

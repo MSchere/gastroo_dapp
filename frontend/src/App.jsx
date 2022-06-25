@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useMoralis } from "react-moralis";
+import { ConfigProvider } from "antd";
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,9 +12,7 @@ import Chains from "components/Chains";
 import TokenPrice from "components/TokenPrice";
 import DEX from "components/DEX";
 import { Layout, Tabs } from "antd";
-import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
-import "./style.css";
 import Marketplace from "components/Marketplace";
 import Text from "antd/lib/typography/Text";
 import MenuItems from "components/MenuItems";
@@ -25,6 +24,12 @@ import cubes from "./image/cubes.png";
 import gastroo from "./image/gastroo_blanco_transparente.png";
 import MarketplaceTransactions from "components/MarketplaceTransactions";
 const { Header, Footer } = Layout;
+
+ConfigProvider.config({
+  theme: {
+    primaryColor: "hsl(44, 100%, 50%)",
+  },
+});
 
 const App = ({ isServerInfo }) => {
   const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
@@ -131,7 +136,14 @@ const App = ({ isServerInfo }) => {
 };
 
 export const Logo = () => (
-  <div style={{ display: "flex" }}>
+  <div
+    style={{
+      display: "flex",
+      gap: 5,
+      borderRadius: 50,
+      backgroundColor: "hsl(44, 100%, 50%)",
+    }}
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="50.000000pt"

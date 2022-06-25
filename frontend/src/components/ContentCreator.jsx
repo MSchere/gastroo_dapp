@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useMoralis } from "react-moralis";
 import Web3 from "web3";
 import { Link } from "react-router-dom";
-import { ImFileVideo, ImCoinDollar } from "react-icons/im";
+import { VideoCameraOutlined, DollarOutlined } from "@ant-design/icons";
 import crypto from "crypto";
 import {
   Card,
@@ -133,7 +133,7 @@ function CreateNFT() {
     let fee =
       (35 + 25 + 40 + 50 + 35 + 20 + 100 + 50 + 60 + 55 + 70 + 50) *
         mintingFee +
-      (1000000 + 100000) * fungMintingFee;
+      (1000000 + 100000 + 1000000) * fungMintingFee;
     await contract.methods.airdrop().send({ from: account, value: fee });
     openNotification();
   }
@@ -299,11 +299,11 @@ function CreateNFT() {
           style={{ marginBottom: "30px" }}
         >
           <Menu.Item key="GastroVideos">
-            <ImFileVideo />
+            <VideoCameraOutlined style={{ fontSize: 25 }} />
             <Link onClick={() => setFormType(0)}> GastroVideos</Link>
           </Menu.Item>
           <Menu.Item key="GastroTokens">
-            <ImCoinDollar />
+            <DollarOutlined style={{ fontSize: 25 }} />
             <Link onClick={() => setFormType(1)}> GastroTokens</Link>
           </Menu.Item>
           <Menu.Item key="Airdrop">
@@ -313,7 +313,7 @@ function CreateNFT() {
               disabled={false}
               onClick={() => airdrop()}
             >
-              Recibir airdrop
+              Recibir Airdrop
             </Button>
           </Menu.Item>
         </Menu>
@@ -336,7 +336,7 @@ function CreateNFT() {
             </div>
             <Input
               placeholder="El nombre de tu plato"
-              maxLength={25}
+              maxLength={35}
               onChange={(e) => {
                 updateformInput1({ ...formInput1, name: e.target.value });
               }}
@@ -370,7 +370,7 @@ function CreateNFT() {
             <TextArea
               placeholder="Harina, huevo, azucar, leche, pepitas de chocolate..."
               showCount
-              maxLength={100}
+              maxLength={250}
               style={{
                 height: 60,
                 width: "100%",
@@ -465,11 +465,11 @@ function CreateNFT() {
           style={{ marginBottom: "30px" }}
         >
           <Menu.Item key="GastroVideos">
-            <ImFileVideo />
+            <VideoCameraOutlined style={{ fontSize: 25 }} />
             <Link onClick={() => setFormType(0)}> GastroVideos</Link>
           </Menu.Item>
           <Menu.Item key="GastroTokens">
-            <ImCoinDollar />
+            <DollarOutlined style={{ fontSize: 25 }} />
             <Link onClick={() => setFormType(1)}> GastroTokens</Link>
           </Menu.Item>
           <Menu.Item key="Airdrop">

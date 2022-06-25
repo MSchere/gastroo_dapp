@@ -1,18 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, Col, Divider, Image, Row, Space, Typography } from "antd";
 import { MdRemoveRedEye } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
-import { ImFileVideo, ImEyeBlocked, ImCoinDollar } from "react-icons/im";
-import { ETHLogo, PolygonLogo } from "./Chains/Logos";
-
+import {
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  DollarOutlined,
+} from "@ant-design/icons";
 export const ImageCard = ({ image, isPrivate, isFungible }) => {
+  const [visible, setVisible] = useState(false);
   let Icon;
+  let bgColor;
   if (isPrivate) {
-    Icon = ImEyeBlocked;
+    Icon = EyeInvisibleOutlined;
+    bgColor = "cyan";
   } else if (isFungible) {
-    Icon = ImCoinDollar;
+    Icon = DollarOutlined;
+    bgColor = "hsl(44, 100%, 50%)";
   } else {
-    Icon = ImFileVideo;
+    Icon = EyeOutlined;
+    bgColor = "hsl(117, 100%, 50%)";
   }
   return (
     <div
@@ -27,10 +34,20 @@ export const ImageCard = ({ image, isPrivate, isFungible }) => {
         src={image}
         alt="Header-Card-Img"
         preview={{
+          visible: false,
           mask: <MdRemoveRedEye style={{ fontSize: 40 }} />,
         }}
       />
-      <Icon size={25} style={{ position: "absolute", top: 7, left: 7 }} />
+      <span
+        className="dot"
+        style={{
+          position: "absolute",
+          backgroundColor: bgColor,
+          top: 9,
+          left: 9,
+        }}
+      />
+      <Icon style={{ fontSize: 25, position: "absolute", top: 7, left: 7 }} />
     </div>
   );
 };
@@ -54,10 +71,18 @@ export const CardContent = ({
       <Typography.Text>{description}</Typography.Text>
       <Row justify="space-between" style={{ marginTop: 15 }}>
         <Col className="align-items-center">
-          <CurrencyIcon style={{ marginRight: 3, marginBottom: 2 }} />
+          <CurrencyIcon
+            style={{ marginRight: 3, marginBottom: 2, background: "white" }}
+          />
           <Typography.Text strong>{price}</Typography.Text>
         </Col>
         <Col className="align-items-center">
+          <Typography.Text
+            type="secondary"
+            style={{ marginRight: 5, marginBottom: 5, fontSize: "12px" }}
+          >
+            Cantidad:
+          </Typography.Text>
           <Typography.Text strong>{amount}</Typography.Text>
         </Col>
       </Row>

@@ -1,4 +1,4 @@
-import { Card, notification, Input, Menu, Modal, Tooltip, Spin } from "antd";
+import { Card, notification, Input, Menu, Modal, Button, Spin } from "antd";
 import { ImageCard, CardContent } from "./NFTCard";
 import { VideoContent } from "./VideoContent";
 import {
@@ -57,6 +57,7 @@ function MyNFTs() {
           item = {
             tokenId: i.tokenId,
             owner: account,
+            creator: i.creator,
             isPrivate: i.isPrivate,
             ownedAmount: ownedAmount,
             image: meta.data.image,
@@ -70,6 +71,7 @@ function MyNFTs() {
           item = {
             tokenId: i.tokenId,
             owner: account,
+            creator: i.creator,
             isPrivate: i.isPrivate,
             isFungible: i.isFungible,
             ownedAmount: ownedAmount,
@@ -133,50 +135,39 @@ function MyNFTs() {
       <div>
         <Menu className="menu-content" style={{ marginBottom: "15px" }}>
           <Menu.Item>
-            <h1>🧑‍🍳 Mis contenidos</h1>
+            <h1>👛 Mi cartera</h1>
           </Menu.Item>
         </Menu>
         <div className="NFT-wallet">
           {nfts.map((nft, i) => {
             return (
-              <Card
-                className="nft-card"
-                hoverable
-                bordered={false}
-                actions={[
-                  <Tooltip title="Ver en Etherscan">
-                    <CodeSandboxOutlined
-                      onClick={() =>
-                        window.open(
-                          `${getExplorer(chainId)}address/${nft.token_address}`,
-                          "_blank",
-                        )
-                      }
-                    />
-                  </Tooltip>,
-                  <Tooltip title="Ver contenido">
-                    <FileSearchOutlined
-                      onClick={() => handleTransferClick2(nft)}
-                    />
-                  </Tooltip>,
-                  <Tooltip title="Poner Tokens en venta">
-                    <DollarOutlined onClick={() => handleTransferClick(nft)} />
-                  </Tooltip>,
-                ]}
-                key={i}
-              >
-                <ImageCard
-                  image={nft.image}
-                  isPrivate={nft.isPrivate}
-                  isFungible={nft.isFungible}
-                />{" "}
+              <Card className="nft-card" hoverable bordered={false} key={i}>
+                <div onClick={() => handleTransferClick2(nft)}>
+                  <ImageCard
+                    image={nft.image}
+                    isPrivate={nft.isPrivate}
+                    isFungible={nft.isFungible}
+                  />
+                </div>
                 <CardContent
                   name={nft.name}
                   description={nft.token_address}
                   sellerAddress={nft.seller}
-                  amount={"x" + nft.ownedAmount}
+                  amount={nft.ownedAmount}
                   price={""}
                 />
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => handleTransferClick(nft)}
+                  icon={<DollarOutlined />}
+                  style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                  }}
+                >
+                  Poner en venta
+                </Button>
               </Card>
             );
           })}
@@ -228,6 +219,7 @@ function MyNFTs() {
             ingredients={selectedNFT?.ingredients}
             categories={selectedNFT?.categories}
             owner={selectedNFT?.owner}
+            creator={selectedNFT?.creator}
             isFungible={selectedNFT?.isFungible}
           />
         </Modal>
