@@ -31,7 +31,7 @@ function MenuItems() {
         <NavLink to="/marketplace">Mercado</NavLink>
       </Menu.Item>
       <Menu.SubMenu
-        title="Mis contenidos 🔻"
+        title="Mis contenidos ▾"
         style={{ fontSize: 25 }}
         icon={<VideoCameraOutlined style={{ fontSize: 25 }} />}
       >

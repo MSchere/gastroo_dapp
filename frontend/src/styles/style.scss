@@ -70,11 +70,11 @@ $gastroo-hover: hsl(52, 100%, 50%);
   margin-left: 15px;
 }
 
-.address-header {
+.creator-card-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 16px;
+  font-size: 25px;
   text-align: center;
 }
 
@@ -226,15 +226,26 @@ $gastroo-hover: hsl(52, 100%, 50%);
 
 .ant-modal {
   border-radius: 15px;
-  //box-shadow: 5px 10px 35px hsl(0, 0%, 55%);
   font-family: 'Roboto', sans-serif;
-  font-size: 18px;
 
+  .ant-modal-content {
+    overflow: auto;
+    font-size: 18px;
+    border-radius: 1rem;
+  }
+  
+  .ant-modal-header {
+    text-align: center;
+    font-size: 25px;
+    background-color: $gastroo;
+  }
   .video-mask {
     box-shadow: 5px 5px 10px hsl(0, 0%, 55%);
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
     background: black;
     width: fit-content;
     height: fit-content;
@@ -243,46 +254,27 @@ $gastroo-hover: hsl(52, 100%, 50%);
   }
 }
 
-.ant-modal-content {
-  overflow: auto;
-  border-radius: 1rem;
-}
 
-.ant-modal-header {
-  background-color: $gastroo;
-}
 
 .ant-table {
   font-family: Roboto, sans-serif;
   text-align: center;
-  font-size: 14px;
-}
-
-/* row tags */
+  font-size: 15px;
+  /* row tags */
 .ant-table-thead > tr > th {
   background-color: white;
   text-align: center;
   height: 10px;
   padding: 12px;
 }
-
 /* row data */
 .ant-table-tbody > tr > td {
   text-align: center;
 }
-
-// .ant-btn-primary {
-//   background-color: $gastroo;
-//   border-color: $gastroo;
-//   &:hover {
-//     background-color: $gastroo-hover;
-//     border-color: $gastroo-hover;
-//   }
-// }
-
+}
 
 .dot {
-  height: 21px;
+  height: 17px;
   width: 21px;
   border-radius: 50%;
   display: inline-block;

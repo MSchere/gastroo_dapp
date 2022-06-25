@@ -10,16 +10,12 @@ import {
 export const ImageCard = ({ image, isPrivate, isFungible }) => {
   const [visible, setVisible] = useState(false);
   let Icon;
-  let bgColor;
   if (isPrivate) {
     Icon = EyeInvisibleOutlined;
-    bgColor = "cyan";
   } else if (isFungible) {
     Icon = DollarOutlined;
-    bgColor = "hsl(44, 100%, 50%)";
   } else {
     Icon = EyeOutlined;
-    bgColor = "hsl(117, 100%, 50%)";
   }
   return (
     <div
@@ -42,8 +38,8 @@ export const ImageCard = ({ image, isPrivate, isFungible }) => {
         className="dot"
         style={{
           position: "absolute",
-          backgroundColor: bgColor,
-          top: 9,
+          backgroundColor: "white",
+          top: 11,
           left: 9,
         }}
       />
@@ -57,6 +53,7 @@ export const CardContent = ({
   description,
   sellerAddress,
   amount,
+  totalAmount,
   price,
 }) => {
   let CurrencyIcon;
@@ -81,9 +78,15 @@ export const CardContent = ({
             type="secondary"
             style={{ marginRight: 5, marginBottom: 5, fontSize: "12px" }}
           >
-            Cantidad:
+            Cant:
           </Typography.Text>
           <Typography.Text strong>{amount}</Typography.Text>
+          <Typography.Text
+            type="secondary"
+            style={{ marginTop: 5, marginLeft: 5, fontSize: 12 }}
+          >
+            {totalAmount}
+          </Typography.Text>
         </Col>
       </Row>
       <Row justify="space-between" style={{ marginTop: 15 }}>

@@ -17,6 +17,10 @@ export const VideoContent = ({
     return (
       <div>
         <Typography.Title level={2}>{name}</Typography.Title>
+        <Typography.Text strong style={{ fontSize: 20 }}>
+          🧑‍🍳 Por:
+        </Typography.Text>
+        <Link style={{ fontSize: 17, marginLeft: 10 }}>{creator}</Link>
         <div className="video-mask">
           <video
             src={video}
@@ -24,7 +28,7 @@ export const VideoContent = ({
             style={{ maxWidth: 360, maxHeight: 480 }}
           />
         </div>
-        <Row justify="space-between" style={{ marginTop: 15 }}>
+        <Row justify="space-between">
           <Typography.Paragraph style={{ marginLeft: 15 }}>
             <blockquote>{description}</blockquote>
           </Typography.Paragraph>
@@ -42,18 +46,16 @@ export const VideoContent = ({
             <Typography.Text strong>{categories}</Typography.Text>
           </li>
         </ul>
-        <Divider />
-
-        <Typography.Text strong style={{ fontSize: 17 }}>
-          👨‍🍳 Creador:{" "}
-        </Typography.Text>
-        <Link>{creator}</Link>
       </div>
     );
   } else if (isPrivate) {
     return (
       <div>
         <Typography.Title level={2}>{name}</Typography.Title>
+        <Typography.Text strong style={{ fontSize: 20 }}>
+          🧑‍🍳 Por:
+        </Typography.Text>
+        <Link style={{ fontSize: 17, marginLeft: 10 }}>{creator}</Link>
         <div className="video-mask">
           <video src={video} controls />
         </div>
@@ -95,6 +97,10 @@ export const VideoContent = ({
     return (
       <div>
         <Typography.Title level={2}>{name}</Typography.Title>
+        <Typography.Text strong style={{ fontSize: 20 }}>
+          🧑‍🍳 Por:
+        </Typography.Text>
+        <Link style={{ fontSize: 17, marginLeft: 10 }}>{creator}</Link>
         <div className="video-mask">
           <img src={image} />
         </div>

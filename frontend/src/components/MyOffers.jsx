@@ -56,9 +56,9 @@ function MyOffers() {
           item = {
             offerId: i.offerId,
             tokenId: i.item.tokenId,
+            creator: i.item.creator,
             seller: i.seller,
             owner: i.owner,
-            creator: i.creator,
             amount: i.amount,
             price,
             totalAmount: i.item.totalAmount,
@@ -76,7 +76,7 @@ function MyOffers() {
             tokenId: i.item.tokenId,
             seller: i.seller,
             owner: i.owner,
-            creator: i.creator,
+            creator: i.item.creator,
             amount: i.amount,
             price,
             totalAmount: i.item.totalAmount,
@@ -155,7 +155,8 @@ function MyOffers() {
                 <CardContent
                   name={offer.name}
                   description={offer.token_address}
-                  amount={offer.amount + " / " + offer.totalAmount}
+                  amount={offer.amount}
+                  totalAmount={" / " + offer.totalAmount}
                   sellerAddress={""}
                   price={offer.price}
                   isOffer={true}

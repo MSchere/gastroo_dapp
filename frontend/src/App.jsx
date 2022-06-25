@@ -6,6 +6,7 @@ import {
   Switch,
   Route,
   Redirect,
+  Link,
 } from "react-router-dom";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
@@ -136,7 +137,8 @@ const App = ({ isServerInfo }) => {
 };
 
 export const Logo = () => (
-  <div
+  <Link
+    to="/marketplace"
     style={{
       display: "flex",
       gap: 5,
@@ -174,7 +176,7 @@ export const Logo = () => (
         />
       </g>
     </svg>
-  </div>
+  </Link>
 );
 
 export default App;

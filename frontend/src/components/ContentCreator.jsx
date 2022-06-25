@@ -294,13 +294,13 @@ function CreateNFT() {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["GastroVideos"]}
+          defaultSelectedKeys={["GastroVídeos"]}
           className="menu-content"
           style={{ marginBottom: "30px" }}
         >
-          <Menu.Item key="GastroVideos">
+          <Menu.Item key="GastroVídeos">
             <VideoCameraOutlined style={{ fontSize: 25 }} />
-            <Link onClick={() => setFormType(0)}> GastroVideos</Link>
+            <Link onClick={() => setFormType(0)}> GastroVídeos</Link>
           </Menu.Item>
           <Menu.Item key="GastroTokens">
             <DollarOutlined style={{ fontSize: 25 }} />
@@ -320,23 +320,18 @@ function CreateNFT() {
         <Card
           className="creator-card"
           title={
-            <div className="address-header">
-              <Blockie scale={5} avatar currentWallet style />
-              <Address size="6" copyable />
-              <NativeBalance />
+            <div className="creator-card-header">
+              <Text strong>Creador de GastroVídeos</Text>
             </div>
           }
         >
-          <div className="address-header">
-            <h3>Creador de GastroVideos</h3>
-          </div>
           <div style={styles.select}>
             <div style={styles.textWrapper}>
               <Text strong>Nombre del plato</Text>
             </div>
             <Input
               placeholder="El nombre de tu plato"
-              maxLength={35}
+              maxLength={25}
               onChange={(e) => {
                 updateformInput1({ ...formInput1, name: e.target.value });
               }}
@@ -464,9 +459,9 @@ function CreateNFT() {
           className="menu-content"
           style={{ marginBottom: "30px" }}
         >
-          <Menu.Item key="GastroVideos">
+          <Menu.Item key="GastroVídeos">
             <VideoCameraOutlined style={{ fontSize: 25 }} />
-            <Link onClick={() => setFormType(0)}> GastroVideos</Link>
+            <Link onClick={() => setFormType(0)}> GastroVídeos</Link>
           </Menu.Item>
           <Menu.Item key="GastroTokens">
             <DollarOutlined style={{ fontSize: 25 }} />
@@ -479,23 +474,18 @@ function CreateNFT() {
               disabled={false}
               onClick={() => airdrop()}
             >
-              Recibir airdrop
+              Recibir Airdrop
             </Button>
           </Menu.Item>
         </Menu>
         <Card
           className="creator-card"
           title={
-            <div className="address-header">
-              <Blockie scale={5} avatar currentWallet style />
-              <Address size="6" copyable />
-              <NativeBalance />
+            <div className="creator-card-header">
+              <Text strong>Creador de GastroTokens</Text>
             </div>
           }
         >
-          <div className="address-header">
-            <h3>Creador de GastroTokens</h3>
-          </div>
           <div style={styles.select}>
             <div style={styles.textWrapper}>
               <Text strong>Nombre del GastroToken</Text>

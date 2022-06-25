@@ -136,25 +136,25 @@ function Marketplace() {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["GastroVideos Públicos"]}
+          defaultSelectedKeys={["GastroVídeos Públicos"]}
           className="menu-content"
           style={{ marginBottom: "15px" }}
         >
           <Menu.Item
-            key="GastroVideos Públicos"
+            key="GastroVídeos Públicos"
             icon={<EyeOutlined style={{ fontSize: 25 }} />}
           >
-            <Link onClick={() => reloadOffers(0)}> GastroVideos Públicos</Link>
+            <Link onClick={() => reloadOffers(0)}> GastroVídeos Públicos</Link>
           </Menu.Item>
           <Menu.Item
-            key="GastroVideos Privados"
+            key="GastroVídeos Privados"
             icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
           >
-            <Link onClick={() => reloadOffers(1)}> GastroVideos Privados</Link>
+            <Link onClick={() => reloadOffers(1)}> GastroVídeos Privados</Link>
           </Menu.Item>
           <Menu.Item
             key="GastroTokens"
-            icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
+            icon={<DollarOutlined style={{ fontSize: 25 }} />}
           >
             <Link onClick={() => reloadOffers(2)}> GastroTokens</Link>
           </Menu.Item>
@@ -174,7 +174,8 @@ function Marketplace() {
                   <CardContent
                     name={offer.name}
                     description={offer.token_address}
-                    amount={offer.amount + " / " + offer.totalAmount}
+                    amount={offer.amount}
+                    totalAmount={" / " + offer.totalAmount}
                     sellerAddress={""}
                     price={offer.price}
                     isOffer={true}
@@ -238,26 +239,26 @@ function Marketplace() {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["GastroVideos Públicos"]}
+          defaultSelectedKeys={["GastroVídeos Públicos"]}
           disabledOverflow={true}
           className="menu-content"
           style={{ marginBottom: "15px" }}
         >
           <Menu.Item
-            key="GastroVideos Públicos"
+            key="GastroVídeos Públicos"
             icon={<EyeOutlined style={{ fontSize: 25 }} />}
           >
-            <Link> GastroVideos Públicos</Link>
+            <Link> GastroVídeos Públicos</Link>
           </Menu.Item>
           <Menu.Item
-            key="GastroVideos Privados"
+            key="GastroVídeos Privados"
             icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
           >
-            <Link> GastroVideos Privados</Link>
+            <Link> GastroVídeos Privados</Link>
           </Menu.Item>
           <Menu.Item
             key="GastroTokens"
-            icon={<EyeInvisibleOutlined style={{ fontSize: 25 }} />}
+            icon={<DollarOutlined style={{ fontSize: 25 }} />}
           >
             <Link> GastroTokens</Link>
           </Menu.Item>
