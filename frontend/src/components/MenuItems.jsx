@@ -14,26 +14,21 @@ function MenuItems() {
     <Menu
       theme="light"
       mode="horizontal"
-      style={{
-        display: "flex",
-        fontSize: "17px",
-        fontWeight: "500",
-        width: "100%",
-        justifyContent: "center",
-      }}
+      className="main-menu"
+      disabledOverflow={false}
       defaultSelectedKeys={[pathname]}
     >
       <Menu.Item
         key="/marketplace"
-        style={{ fontSize: 25 }}
-        icon={<ShoppingCartOutlined style={{ fontSize: 25 }} />}
+        style={{ fontSize: "1.56rem" }}
+        icon={<ShoppingCartOutlined style={{ fontSize: "1.56rem" }} />}
       >
         <NavLink to="/marketplace">Mercado</NavLink>
       </Menu.Item>
       <Menu.SubMenu
         title="Mis contenidos ▾"
-        style={{ fontSize: 25 }}
-        icon={<VideoCameraOutlined style={{ fontSize: 25 }} />}
+        style={{ fontSize: "1.56rem" }}
+        icon={<VideoCameraOutlined style={{ fontSize: "1.56rem" }} />}
       >
         <Menu.Item key="/wallet">
           <NavLink to="/wallet">👛 Mi cartera</NavLink>
@@ -47,11 +42,14 @@ function MenuItems() {
       </Menu.SubMenu>
       <Menu.Item
         key="/transactions"
-        icon={<TransactionOutlined style={{ fontSize: 15 }} />}
+        icon={<TransactionOutlined style={{ fontSize: "0.94rem" }} />}
       >
         <NavLink to="/transactions">Transacciones</NavLink>
       </Menu.Item>
-      <Menu.Item key="/1inch" icon={<SwapOutlined style={{ fontSize: 15 }} />}>
+      <Menu.Item
+        key="/1inch"
+        icon={<SwapOutlined style={{ fontSize: "0.94rem" }} />}
+      >
         <NavLink to="/1inch">Exchange</NavLink>
       </Menu.Item>
     </Menu>

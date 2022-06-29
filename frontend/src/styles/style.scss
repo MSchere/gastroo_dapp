@@ -4,8 +4,17 @@ $soft-blue: hsl(215, 51%, 70%);
 $cyan: hsl(164, 71%, 44%);
 $white: hsl(0, 0%, 100%);
 $gastroo: hsl(44, 100%, 50%);
-$gastroo-hover: hsl(52, 100%, 50%);
+$gastroo-hover: hsl(46, 100%, 58%);
 
+
+.layout {
+  height: 100vh;
+  overflow: "auto";
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+
+}
 .header {
   position: fixed;
   z-index: 1;
@@ -15,26 +24,25 @@ $gastroo-hover: hsl(52, 100%, 50%);
   justify-content: space-between;
   align-items: center;
   font-family: Roboto, sans-serif;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
-  padding: 0 10px;
-  box-shadow: 3px 5px 35px hsl(0, 0%, 55%);
-
+  border-bottom: 0.13rem solid rgba(0, 0, 0, 0.06);
+  padding: 0 0.62rem;
+  box-shadow: 0.2rem 0.3rem 2.2rem hsl(0, 0%, 55%);
 }
 
 .header-right {
   display: flex;
-  gap: 20px;
+  gap: 1.25rem;
   align-items: center;
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 600;
 }
+
 .content {
   display: flex;
+  align-items: center;
   justify-content: center;
   font-family: Roboto, sans-serif;
   color: #10122c;
-  //margin-top: 130px;
-  //padding: 10px;
 }
 
 .mx-auto {
@@ -43,9 +51,10 @@ $gastroo-hover: hsl(52, 100%, 50%);
 }
 
 .content-card-center {
-  max-width: 375px;
+  width: clamp(200px, 50%, 800px);
+  //max-width: 23.5rem;
   height: 100vh;
-  padding: 0px 16px;
+  padding: 0rem 1em;
   display: flex;
   align-items: center;
 }
@@ -60,37 +69,34 @@ $gastroo-hover: hsl(52, 100%, 50%);
 }
 
 .creator-card {
-  box-shadow: 5px 10px 35px hsl(0, 0%, 55%);
-  margin-top: 15px;
-  border-radius: 10px;
-  width: 650px;
-  font-size: 16px;
+  //width: clamp(225px, 650px, 1300px);
+  box-shadow: 0.3rem 0.62rem  2.2rem hsl(0, 0%, 55%);
+  border-radius: 0.625rem;
+  font-size: 1rem;
   font-weight: 500;
   align-items: center;
-  margin-left: 15px;
+  margin: 1rem;
 }
 
 .creator-card-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 25px;
+  font-size: 1.6rem;
   text-align: center;
 }
 
 .header-div {
   place-items: center;
   margin: 0 auto;
-  max-width: 100%;
   width: 100%;
 }
 
 .header-img {
   position: relative;
   object-fit: cover;
-  max-width: 100%;
   width: 100%;
-  height: 300px;
+  height: clamp(150px, 300px, 600px);
   z-index: 0;
 }
 
@@ -98,7 +104,7 @@ $gastroo-hover: hsl(52, 100%, 50%);
   position: absolute;
   margin-left: auto;
   margin-right: auto;
-  top: 85px;
+  top: 5.3rem;
   left: 0;
   right: 0;
 }
@@ -109,12 +115,19 @@ $gastroo-hover: hsl(52, 100%, 50%);
     left: 50%;
 }
 
+.main-menu {
+  display: flex;
+  font-size: 1.06rem;
+  font-weight: 500;
+  width: 100%;
+  justify-content: center;
+}
+
 .menu-content {
-    display: flex;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 500;
     width: 100%;
-    justify-content: center;
+    text-align: center;
 }
 
 .menu-background {
@@ -122,9 +135,8 @@ $gastroo-hover: hsl(52, 100%, 50%);
   margin-left: auto;
   margin-right: auto;
   background-color: white;
-  top: 300px;
-  height: 48px;
-  max-height: 50px;
+  top: 18.75rem;
+  height: clamp(24px, 48px, 96px);
   left: 0;
   right: 0;
 }
@@ -132,7 +144,7 @@ $gastroo-hover: hsl(52, 100%, 50%);
 .input {
   width: 100%;
   outline: none;
-  font-size: 16px;
+  font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -142,37 +154,57 @@ $gastroo-hover: hsl(52, 100%, 50%);
   background-color: transparent;
 }
 
-@mixin NFTs {
-  padding: 15px;
+.NFTs {
+  padding: 1rem;
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
-  margin-left: 25px;
-  margin-right: 25px;
-  gap: 20px;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  gap: 1.25rem;
 }
 
-.NFT-wallet {
-  @include NFTs;
-}
-
-.NFT-marketplace {
-  @include NFTs;
+@media only screen and (max-width: 400px) {
+  .NFTs {
+    padding: 1rem;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 1.25rem;
+  }
+  .main-menu {
+    display: flex;
+    font-size: 1.06rem;
+    font-weight: 500;
+    width: 25%;
+    justify-content: center;
+  }
+  .header-right {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+  }  
+  
 }
 
 .nft-card {
   font-family: 'Roboto', sans-serif;
-  border-radius: 15px;
-  box-shadow: 5px 10px 35px hsl(0, 0%, 55%);
-  width: 275px;
-  height: 400px;
-  font-size: 18px;
+  border-radius: 1rem;
+  box-shadow: 0.3rem 0.62rem  2.2rem hsl(0, 0%, 55%);
+  width: clamp(135px, 275px, 550px);
+  height: clamp(200px, 400px, 600px);
+  font-size: 1.125rem;
 
   .ant-card-body {
 
-    padding: 12px;
+    padding: 0.75rem;
 
     .image-mask {
       display: block;
@@ -182,23 +214,23 @@ $gastroo-hover: hsl(52, 100%, 50%);
 
     .ant-image-img {
       object-fit: cover;
-      width: 250px;
-      height: 250px;
-      border-radius: 10px;
+      width: 15.6rem;
+      height: 15.6rem;
+      border-radius: 0.625rem;
     }
 
     .ant-image-mask {
-      border-radius: 10px;
+      border-radius: 0.625rem;
       //background-color: hsla(178, 100%, 50%, 0.6);
     }
 
     h1 {
-      font-size: 16px;
+      font-size: 1rem;
     }
 
     .link {
-      margin-top: 15px;
-      margin-bottom: 15px;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
       color: $white;
     }
 
@@ -214,58 +246,57 @@ $gastroo-hover: hsl(52, 100%, 50%);
     }
 
     .ant-divider {
-      margin-bottom: 15px;
-      margin-top: 20px;
+      margin-bottom: 1rem;
+      margin-top: 1.25rem;
     }
 
     .ant-avatar {
-      border: 1px solid $white
+      border: 0.06rem solid $white
     }
   }
 }
 
 .ant-modal {
-  border-radius: 15px;
+  border-radius: 1rem;
   font-family: 'Roboto', sans-serif;
 
   .ant-modal-content {
     overflow: auto;
-    font-size: 18px;
+    margin: 0.25rem;
+    font-size: 1.125rem;
     border-radius: 1rem;
   }
   
   .ant-modal-header {
     text-align: center;
-    font-size: 25px;
+    font-size: 1.56rem;
     background-color: $gastroo;
   }
   .video-mask {
-    box-shadow: 5px 5px 10px hsl(0, 0%, 55%);
+    box-shadow: 0.3rem 0.3rem 0.62rem hsl(0, 0%, 55%);
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 0.62rem;
+    margin-bottom: 0.62rem;
     background: black;
     width: fit-content;
     height: fit-content;
-    border-radius: 10px;
+    border-radius: 0.62rem;
     overflow: hidden;
   }
 }
 
-
-
 .ant-table {
   font-family: Roboto, sans-serif;
   text-align: center;
-  font-size: 15px;
+  font-size: 1rem;
   /* row tags */
 .ant-table-thead > tr > th {
   background-color: white;
   text-align: center;
-  height: 10px;
-  padding: 12px;
+  height: 0.62rem;
+  padding: 0.75rem;
 }
 /* row data */
 .ant-table-tbody > tr > td {
@@ -274,9 +305,29 @@ $gastroo-hover: hsl(52, 100%, 50%);
 }
 
 .dot {
-  height: 17px;
-  width: 21px;
+  height: 1rem;
+  width: 1.3rem;
   border-radius: 50%;
   display: inline-block;
   position: absolute;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: white;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $gastroo;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $gastroo-hover;
 }

@@ -44,13 +44,12 @@ const App = ({ isServerInfo }) => {
   }, [isAuthenticated, isWeb3Enabled]);
 
   return (
-    <Layout style={{ height: "100vh", overflow: "auto" }}>
+    <Layout className="layout">
       <Router>
         <Header className="header">
           <Logo />
           <MenuItems />
           <div className="header-right">
-            <Chains />
             <NativeBalance />
             <TokenPrice
               address="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
@@ -59,6 +58,7 @@ const App = ({ isServerInfo }) => {
               size="40px"
             />
             <Account />
+            <Chains />
           </div>
         </Header>
         <div

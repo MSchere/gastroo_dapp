@@ -136,9 +136,10 @@ function Marketplace() {
         <Menu
           theme="light"
           mode="horizontal"
+          disabledOverflow={true}
           defaultSelectedKeys={["GastroVídeos Públicos"]}
           className="menu-content"
-          style={{ marginBottom: "15px" }}
+          style={{ marginBottom: "1rem" }}
         >
           <Menu.Item
             key="GastroVídeos Públicos"
@@ -159,7 +160,7 @@ function Marketplace() {
             <Link onClick={() => reloadOffers(2)}> GastroTokens</Link>
           </Menu.Item>
         </Menu>
-        <div className="NFT-marketplace">
+        <div className="NFTs">
           {offers.map((offer, i) => {
             if (offer != null) {
               return (
@@ -242,7 +243,7 @@ function Marketplace() {
           defaultSelectedKeys={["GastroVídeos Públicos"]}
           disabledOverflow={true}
           className="menu-content"
-          style={{ marginBottom: "15px" }}
+          style={{ marginBottom: "1rem" }}
         >
           <Menu.Item
             key="GastroVídeos Públicos"

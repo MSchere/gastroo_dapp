@@ -109,7 +109,7 @@ function AddressInput(props) {
       disabled={validatedAddress}
       style={
         validatedAddress
-          ? { ...props?.style, border: "1px solid rgb(33, 191, 150)" }
+          ? { ...props?.style, border: "0.06rem solid rgb(33, 191, 150)" }
           : { ...props?.style }
       }
     />

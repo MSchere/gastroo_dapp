@@ -397,7 +397,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         uint64[17] memory prices = [0.01 ether,0.02 ether,0.015 ether,0.007 ether,0.025 ether,0.001 ether,
         0.002 ether, 0.0025 ether, 0.001 ether,0.0056 ether,0.1 ether,0.055 ether,0.15 ether,0.1 ether,0.00001 ether,0.000012 ether,0.00001 ether];
 
-        for (uint i = 0; i < 15; i++) {
+        for (uint i = 0; i < 17; i++) {
             createToken(uris[i], amounts[i], privates[i], fungibles[i]);
             createMarketOffer(i+1, amountsOnSale[i], prices[i]);
         }

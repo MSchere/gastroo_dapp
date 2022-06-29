@@ -17,19 +17,21 @@ export const VideoContent = ({
     return (
       <div>
         <Typography.Title level={2}>{name}</Typography.Title>
-        <Typography.Text strong style={{ fontSize: 20 }}>
+        <Typography.Text strong style={{ fontSize: "1.25rem" }}>
           🧑‍🍳 Por:
         </Typography.Text>
-        <Link style={{ fontSize: 17, marginLeft: 10 }}>{creator}</Link>
+        <Link style={{ fontSize: "1.06rem", marginLeft: "0.625rem" }}>
+          {creator}
+        </Link>
         <div className="video-mask">
           <video
             src={video}
             controls
-            style={{ maxWidth: 360, maxHeight: 480 }}
+            style={{ maxWidth: "22.5rem", maxHeight: "30rem" }}
           />
         </div>
         <Row justify="space-between">
-          <Typography.Paragraph style={{ marginLeft: 15 }}>
+          <Typography.Paragraph style={{ marginLeft: "1rem" }}>
             <blockquote>{description}</blockquote>
           </Typography.Paragraph>
         </Row>
@@ -52,10 +54,12 @@ export const VideoContent = ({
     return (
       <div>
         <Typography.Title level={2}>{name}</Typography.Title>
-        <Typography.Text strong style={{ fontSize: 20 }}>
+        <Typography.Text strong style={{ fontSize: "1.25rem" }}>
           🧑‍🍳 Por:
         </Typography.Text>
-        <Link style={{ fontSize: 17, marginLeft: 10 }}>{creator}</Link>
+        <Link style={{ fontSize: "1.06rem", marginLeft: "0.625rem" }}>
+          {creator}
+        </Link>
         <div className="video-mask">
           <video src={video} controls />
         </div>
@@ -63,8 +67,8 @@ export const VideoContent = ({
           <Typography.Text
             strong
             style={{
-              marginTop: 15,
-              marginBottom: 15,
+              marginTop: "1rem",
+              marginBottom: "1rem",
               color: "red",
               display: "block",
               marginLeft: "auto",
@@ -97,14 +101,16 @@ export const VideoContent = ({
     return (
       <div>
         <Typography.Title level={2}>{name}</Typography.Title>
-        <Typography.Text strong style={{ fontSize: 20 }}>
+        <Typography.Text strong style={{ fontSize: "1.25rem" }}>
           🧑‍🍳 Por:
         </Typography.Text>
-        <Link style={{ fontSize: 17, marginLeft: 10 }}>{creator}</Link>
+        <Link style={{ fontSize: "1.06rem", marginLeft: "0.625rem" }}>
+          {creator}
+        </Link>
         <div className="video-mask">
           <img src={image} />
         </div>
-        <Row justify="space-between" style={{ marginTop: 15 }}>
+        <Row justify="space-between" style={{ marginTop: "1rem" }}>
           <Typography.Paragraph>
             <blockquote>{description}</blockquote>
           </Typography.Paragraph>

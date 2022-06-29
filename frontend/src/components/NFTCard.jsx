@@ -8,7 +8,6 @@ import {
   DollarOutlined,
 } from "@ant-design/icons";
 export const ImageCard = ({ image, isPrivate, isFungible }) => {
-  const [visible, setVisible] = useState(false);
   let Icon;
   if (isPrivate) {
     Icon = EyeInvisibleOutlined;
@@ -31,7 +30,7 @@ export const ImageCard = ({ image, isPrivate, isFungible }) => {
         alt="Header-Card-Img"
         preview={{
           visible: false,
-          mask: <MdRemoveRedEye style={{ fontSize: 40 }} />,
+          mask: <MdRemoveRedEye style={{ fontSize: "2.5rem" }} />,
         }}
       />
       <span
@@ -39,11 +38,18 @@ export const ImageCard = ({ image, isPrivate, isFungible }) => {
         style={{
           position: "absolute",
           backgroundColor: "white",
-          top: 11,
-          left: 9,
+          top: "0.7rem",
+          left: "0.56rem",
         }}
       />
-      <Icon style={{ fontSize: 25, position: "absolute", top: 7, left: 7 }} />
+      <Icon
+        style={{
+          fontSize: "1.56rem",
+          position: "absolute",
+          top: "0.44rem",
+          left: "0.44rem",
+        }}
+      />
     </div>
   );
 };
@@ -69,27 +75,39 @@ export const CardContent = ({
       <Row justify="space-between" style={{ marginTop: 15 }}>
         <Col className="align-items-center">
           <CurrencyIcon
-            style={{ marginRight: 3, marginBottom: 2, background: "white" }}
+            style={{
+              marginRight: "0.19rem",
+              marginBottom: "0.125rem",
+              background: "white",
+            }}
           />
           <Typography.Text strong>{price}</Typography.Text>
         </Col>
         <Col className="align-items-center">
           <Typography.Text
             type="secondary"
-            style={{ marginRight: 5, marginBottom: 5, fontSize: "12px" }}
+            style={{
+              marginRight: "0.31rem",
+              marginBottom: "0.31rem",
+              fontSize: "0.75rem",
+            }}
           >
             Cant:
           </Typography.Text>
           <Typography.Text strong>{amount}</Typography.Text>
           <Typography.Text
             type="secondary"
-            style={{ marginTop: 5, marginLeft: 5, fontSize: 12 }}
+            style={{
+              marginTop: "0.31rem",
+              marginLeft: "0.31rem",
+              fontSize: "0.75rem",
+            }}
           >
             {totalAmount}
           </Typography.Text>
         </Col>
       </Row>
-      <Row justify="space-between" style={{ marginTop: 15 }}>
+      <Row justify="space-between" style={{ marginTop: "0.94rem" }}>
         <Col>
           <Typography.Text type="secondary">{sellerAddress}</Typography.Text>
         </Col>

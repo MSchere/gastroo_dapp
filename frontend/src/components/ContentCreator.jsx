@@ -30,7 +30,7 @@ const { Dragger } = Upload;
 const { TextArea } = Input;
 const styles = {
   title: {
-    fontSize: "30px",
+    fontSize: "1.87rem",
     fontWeight: "600",
   },
   textWrapper: { maxWidth: "200px", width: "100%", marginBottom: "5px" },
@@ -131,7 +131,7 @@ function CreateNFT() {
       .getMintingFee()
       .call({ from: account });
     let fee =
-      (35 + 25 + 40 + 50 + 35 + 20 + 100 + 50 + 60 + 55 + 70 + 50) *
+      (35 + 25 + 40 + 50 + 35 + 20 + 100 + 50 + 60 + 55 + 70 + 50 + 35 + 45) *
         mintingFee +
       (1000000 + 100000 + 1000000) * fungMintingFee;
     await contract.methods.airdrop().send({ from: account, value: fee });
@@ -294,9 +294,10 @@ function CreateNFT() {
         <Menu
           theme="light"
           mode="horizontal"
+          disabledOverflow={true}
           defaultSelectedKeys={["GastroVídeos"]}
           className="menu-content"
-          style={{ marginBottom: "30px" }}
+          style={{ marginBottom: "1rem" }}
         >
           <Menu.Item key="GastroVídeos">
             <VideoCameraOutlined style={{ fontSize: 25 }} />
@@ -455,9 +456,10 @@ function CreateNFT() {
         <Menu
           theme="light"
           mode="horizontal"
+          disabledOverflow={true}
           defaultSelectedKeys={["GastroTokens"]}
           className="menu-content"
-          style={{ marginBottom: "30px" }}
+          style={{ marginBottom: "1rem" }}
         >
           <Menu.Item key="GastroVídeos">
             <VideoCameraOutlined style={{ fontSize: 25 }} />
