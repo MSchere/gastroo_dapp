@@ -1,14 +1,18 @@
 <p align="center">
-  <img width="400" height="196" src="https://user-images.githubusercontent.com/38076357/173185461-4b0b5685-16c5-44b5-bb6f-2f6c64582b31.png">
+  <img src="https://user-images.githubusercontent.com/38076357/175780319-9bfbfa7d-e440-48bd-b3b9-2da57cf8a2a4.png">
 </p>
 
 # Gastroo Web3: Monetiza tu contenido culinario
-_Un marketplace para la venta de NFTs de recetas y videos culinarios._
+_Un marketplace para la venta de recetas y videos culinarios en la web descentralizada._
 
-El contrato está basado en el creado por [migueloxx](https://github.com/migueloxx/tienda-nft/commits?author=migueloxx) e implementa un Marketplace de NFTs del estandar ERC-1155.
+**Gastroo es un proyecto que busca fusionar el mundo culinario con la web descentralizada y provee una plataforma fácil de usar donde aficionados y profesionales de la cocina puedan sacar partido de su contenido culinario. En Gastroo, existen tres tipos principales de tokens:**
+* **GastroVídeos públicos: Cualquiera los puede ver mientras estén disponibles en el mercado.**
+* **GastroVídeos privados: Solo el poseedor del token puede ver el contenido.**
+* **GastroTokens: Tokens con diversas utilidades emitidos por marcas o establecimientos.**
 
 Para la realizacion de este proyecto se han utilizado las siguientes tecnologias:
 * React.js
+* SASS
 * Solidity
 * IPFS
 * Hardhat
