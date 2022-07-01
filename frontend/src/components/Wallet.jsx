@@ -138,7 +138,7 @@ function MyNFTs() {
             <h1>👛 Mi cartera</h1>
           </Menu.Item>
         </Menu>
-        <div className="NFT-wallet">
+        <div className="NFTs">
           {nfts.map((nft, i) => {
             return (
               <Card className="nft-card" hoverable bordered={false} key={i}>

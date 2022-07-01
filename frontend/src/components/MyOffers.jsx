@@ -141,7 +141,7 @@ function MyOffers() {
             <h1>💸 Mis ofertas</h1>
           </Menu.Item>
         </Menu>
-        <div className="NFT-wallet">
+        <div className="NFTs">
           {offers.map((offer, i) => {
             return (
               <Card className="nft-card" hoverable bordered={false} key={i}>
