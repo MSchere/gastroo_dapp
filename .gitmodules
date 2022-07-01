@@ -1,0 +1,3 @@
+[submodule "gastroo_frontend"]
+	path = gastroo_frontend
+	url = https://github.com/MSchere/gastroo_frontend

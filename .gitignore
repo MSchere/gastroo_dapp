@@ -3,25 +3,25 @@
 .vscode
 
 # dependencies
-/frontend/node_modules
-/frontend/.pnp
-/frontend/.pnp.js
+/gastroo_frontend/node_modules
+/gastroo_frontend/.pnp
+/gastroo_frontend/.pnp.js
 
 # testing
-/frontend/coverage
+/gastroo_frontend/coverage
 
 # production
-/frontend/build
+/gastroo_frontend/build
 
 # misc
-/frontend/.DS_Store
+/gastroo_frontend/.DS_Store
 
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-/frontend/coverage
-/frontend/coverage.json
-/frontend/typechain
+/gastroo_frontend/npm-debug.log*
+/gastroo_frontend/yarn-debug.log*
+/gastroo_frontend/yarn-error.log*
+/gastroo_frontend/coverage
+/gastroo_frontend/coverage.json
+/gastroo_frontend/typechain
 /cache
 
 # dependencies
