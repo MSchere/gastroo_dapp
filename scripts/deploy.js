@@ -36,7 +36,7 @@ async function main() {
   
   function saveFrontendFiles(token, nftMarketplace) {
     const fs = require("fs");
-    const contractsDir = __dirname + "/../frontend/src/contracts";
+    const contractsDir = __dirname + "/../gastroo_frontend/src/contracts";
   
     if (!fs.existsSync(contractsDir)) {
       fs.mkdirSync(contractsDir);
