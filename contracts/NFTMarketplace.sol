@@ -22,8 +22,8 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     Counters.Counter private _offersInMarket;
 
     uint256 creatorFee = 100; //tasa del 1% pagada al creador
-    uint256 mintingFee = 0.001 ether; //Se tasa al creador cuando mintea tokens de video
-    uint256 fungMintingFee = 0.00001 ether; //Se tasa al creador cuando mintea tokens fungibles
+    uint256 mintingFee = 0.0001 ether; //Se tasa al creador cuando mintea tokens de video
+    uint256 fungMintingFee = 0.000001 ether; //Se tasa al creador cuando mintea tokens fungibles
 
     /*================Estructuras de datos================*/
     mapping(uint256 => MarketItem) private idToMarketItem;
@@ -50,7 +50,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
 
     event TokenMinted(
         uint256 indexed tokenId,
-        address creator,
+        address indexed creator,
         uint256 totalAmount,
         bool isPrivate,
         bool isFungible,
@@ -60,7 +60,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     event MarketOfferCreated(
         uint256 indexed tokenId,
         uint256 offerId,
-        address seller,
+        address indexed seller,
         uint256 price,
         uint256 amount
     );
@@ -68,21 +68,21 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     event MarketOfferCancelled(
         uint256 indexed tokenId,
         uint256 offerId,
-        address seller,
+        address indexed seller,
         uint256 amount
     );
 
     event MarketItemSold(
         uint256 indexed tokenId,
         uint256 offerId,
-        address buyer,
-        address seller,
+        address indexed buyer,
+        address indexed seller,
         uint256 price,
         uint256 amount
     );
 
     /*================Getters y Setters================*/
-    function updateCreatorFee(uint256 _creatorFee) public payable onlyOwner {
+    function updateCreatorFee(uint256 _creatorFee) public onlyOwner {
         creatorFee = _creatorFee;
     }
 
@@ -91,7 +91,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         return creatorFee;
     }
 
-    function updateMintingFee(uint256 _mintingFee) public payable onlyOwner {
+    function updateMintingFee(uint256 _mintingFee) public onlyOwner {
         mintingFee = _mintingFee;
     }
 
@@ -102,7 +102,6 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
 
     function updateFungMintingFee(uint256 _fungMintingFee)
         public
-        payable
         onlyOwner
     {
         fungMintingFee = _fungMintingFee;
@@ -153,8 +152,8 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         bool isFungible
     ) public payable returns (uint) {
         uint256 fee = 0;
-        if (isFungible) fee = amount * fungMintingFee;
-        else fee = amount * mintingFee;
+        if (isFungible) fee = amount * getFungMintingFee();
+        else fee = amount * getMintingFee();
         require(msg.value >= fee, "Insufficient minting value sent");
         payable(owner()).transfer(fee); //Fee de minteo para el marketplace
         _tokenIds.increment();

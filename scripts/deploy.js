@@ -49,7 +49,10 @@ async function main() {
 
     fs.writeFileSync(
         contractsDir + "/marketplace-address.json",
-        JSON.stringify({ Marketplace: nftMarketplace.address }, undefined, 2)
+        JSON.stringify({ Marketplace: nftMarketplace.address,
+           MarketplaceAvax: "0x2fe28ab810c39338888141c36253fe0b62f48801",
+           MarketplaceAvaxTest: "0xf645d6d8a1035d59834107bdfbf95a42c3f57975",
+           MarketplacePolygonTest: "0x1ed76bf1f8857ad63d0a8bd5b986c282de24c0a7" }, undefined, 2)
     );
   
     const TokenArtifact = artifacts.readArtifactSync("GastrooToken");
