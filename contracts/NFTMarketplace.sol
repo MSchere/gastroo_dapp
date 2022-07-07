@@ -17,18 +17,26 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     using Counters for Counters.Counter;
 
     /*================Variables globales================*/
+
     Counters.Counter private _tokenIds;
     Counters.Counter private _offerIds;
     Counters.Counter private _offersInMarket;
 
-    uint256 creatorFee = 100; //tasa del 1% pagada al creador
-    uint256 mintingFee = 0.0001 ether; //Se tasa al creador cuando mintea tokens de video
-    uint256 fungMintingFee = 0.000001 ether; //Se tasa al creador cuando mintea tokens fungibles
+    uint256 creatorFee = 100;
+    //tasa del 1% pagada al creador
+
+    uint256 mintingFee = 0.0001 ether;
+    //Se tasa al creador cuando mintea tokens de video
+
+    uint256 fungMintingFee = 0.000001 ether;
+    //Se tasa al creador cuando mintea tokens fungibles
 
     /*================Estructuras de datos================*/
+    
     mapping(uint256 => MarketItem) private idToMarketItem;
     mapping(uint256 => MarketOffer) private idToMarketOffer;
 
+    //Estructura de datos para los distintos tipos de token
     struct MarketItem {
         uint256 tokenId;
         address payable creator;
@@ -37,6 +45,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         bool isFungible;
     }
 
+    //Estructura de datos para las ofertas en el mercado
     struct MarketOffer {
         MarketItem item;
         uint256 offerId;
@@ -82,6 +91,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     );
 
     /*================Getters y Setters================*/
+
     function updateCreatorFee(uint256 _creatorFee) public onlyOwner {
         creatorFee = _creatorFee;
     }
@@ -100,10 +110,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         return mintingFee;
     }
 
-    function updateFungMintingFee(uint256 _fungMintingFee)
-        public
-        onlyOwner
-    {
+    function updateFungMintingFee(uint256 _fungMintingFee) public onlyOwner {
         fungMintingFee = _fungMintingFee;
     }
 
@@ -179,7 +186,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         return newTokenId;
     }
 
-    /* Crea una oferta en el markeplace especificacndo la
+    /* Crea una oferta en el markeplace especificando
     el id del token, cantidad en venta y precio  */
     function createMarketOffer(
         uint256 tokenId,
@@ -200,13 +207,7 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
             true
         );
         _offersInMarket.increment();
-        emit MarketOfferCreated(
-            tokenId,
-            newOfferId,
-            msg.sender,
-            price,
-            amount
-            );
+        emit MarketOfferCreated(tokenId, newOfferId, msg.sender, price, amount);
     }
 
     /* Cancela una oferta del marketplace especificando el id de oferta  */
@@ -222,16 +223,12 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
         idToMarketOffer[offerId].seller = payable(address(0));
         idToMarketOffer[offerId].isActive = false;
         _offersInMarket.decrement();
-        emit MarketOfferCancelled(
-            tokenId,
-            offerId,
-            msg.sender,
-            amount
-        );
+        emit MarketOfferCancelled(tokenId, offerId, msg.sender, amount);
     }
 
-    /* Realiza la venta de tokens en el MarketPlace */
-    /* Se transfiere la propiedad de los tokens y los fondos correspondientes a la transaccion entre las partes
+    /* Realiza la venta de tokens en el MarketPlace
+    Se transfiere la propiedad de los tokens y los fondos
+	correspondientes a la transaccion entre las partes
     También se paga una tasa del 1% que va al creador */
     function createMarketSale(uint256 offerId, uint256 amount) public payable {
         uint tokenId = idToMarketOffer[offerId].item.tokenId;
@@ -385,20 +382,109 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
             "https://ipfs.infura.io/ipfs/QmWFJHmZF5oNhLZXGLZfzhjNbGims56A7mHbWmw6JDU7w2", //lombarda privada
             "https://ipfs.infura.io/ipfs/QmQi97vEmFQUB7EZv3jm9aZHuFVwnXGirwFcEXxLmxBu1U", //mercaToken
             "https://ipfs.infura.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu", //mcDonaldsCoin
-            "https://ipfs.infura.io/ipfs/QmSUVazUcpHVDNviNzsfuCtkWqt2DeqJ2pV8DjmzSzev5u"  //gastrooToken
+            "https://ipfs.infura.io/ipfs/QmSUVazUcpHVDNviNzsfuCtkWqt2DeqJ2pV8DjmzSzev5u" //gastrooToken
         ];
 
-        uint24[17] memory amounts = [35,25,40,50,35,20,100,50,35,45,60,55,70,50,1000000,100000, 1000000];
-        bool[17] memory privates = [false,false,false,false,false,false,false,false,false,false,true,true,true,true,false,false,false];
-        bool[17] memory fungibles = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,true,true,true];
+        uint24[17] memory amounts = [
+            35,
+            25,
+            40,
+            50,
+            35,
+            20,
+            100,
+            50,
+            35,
+            45,
+            60,
+            55,
+            70,
+            50,
+            1000000,
+            100000,
+            1000000
+        ];
+        bool[17] memory privates = [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
+        ];
+        bool[17] memory fungibles = [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
+        ];
 
-        uint24[17] memory amountsOnSale = [15,5,25,40,25,15,80,25,25,40,30,45,60,45,800000,75000,900000];
-        uint64[17] memory prices = [0.01 ether,0.02 ether,0.015 ether,0.007 ether,0.025 ether,0.001 ether,
-        0.002 ether, 0.0025 ether, 0.001 ether,0.0056 ether,0.1 ether,0.055 ether,0.15 ether,0.1 ether,0.00001 ether,0.000012 ether,0.00001 ether];
+        uint24[17] memory amountsOnSale = [
+            15,
+            5,
+            25,
+            40,
+            25,
+            15,
+            80,
+            25,
+            25,
+            40,
+            30,
+            45,
+            60,
+            45,
+            800000,
+            75000,
+            900000
+        ];
+        uint64[17] memory prices = [
+            0.01 ether,
+            0.02 ether,
+            0.015 ether,
+            0.007 ether,
+            0.025 ether,
+            0.001 ether,
+            0.002 ether,
+            0.0025 ether,
+            0.001 ether,
+            0.0056 ether,
+            0.1 ether,
+            0.055 ether,
+            0.15 ether,
+            0.1 ether,
+            0.00001 ether,
+            0.000012 ether,
+            0.00001 ether
+        ];
 
         for (uint i = 0; i < 17; i++) {
             createToken(uris[i], amounts[i], privates[i], fungibles[i]);
-            createMarketOffer(i+1, amountsOnSale[i], prices[i]);
+            createMarketOffer(i + 1, amountsOnSale[i], prices[i]);
         }
     }
 }
