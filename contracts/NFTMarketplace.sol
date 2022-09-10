@@ -366,23 +366,23 @@ contract NFTMarketplace is ERC1155, Ownable, ERC1155URIStorage, ERC1155Holder {
     /* Función de airdop que genera 14 tipos de token para testeo y pone parte en venta */
     function airdrop() public payable onlyOwner {
         string[17] memory uris = [
-            "https://ipfs.infura.io/ipfs/QmdhVvgsgPc3FCJEJdT3KaepziPKi3dkyeo65wh6zMWMnA", //pizza
-            "https://ipfs.infura.io/ipfs/QmU56VPKXrVKNwZW5JjMNJUBYKVm8fxZwooyTSSRnQACSv", //albondigas
-            "https://ipfs.infura.io/ipfs/QmTprQcFBKVDMfK3sTDA4hxNyCmbSzXdf6ZgTMypWF75Ff", //cesar
-            "https://ipfs.infura.io/ipfs/QmagBJatWuYgSh873wk1C4x9ci7TZS6MsUCS6YWHJkMh9m", //fetuccini
-            "https://ipfs.infura.io/ipfs/QmZS733Permp7mBQ3SAZDEJ5XZg1Cb7b3bitTcufECRBba", //fried chicken
-            "https://ipfs.infura.io/ipfs/QmQpjJAqbGy3E7M3yFL9KyZT9WEoWfN3TEhPryRqyipqEr", //lasagna
-            "https://ipfs.infura.io/ipfs/QmfVtApThAQgzzbbQmCrbuxE9ix3MVSMqKKygF5xNmiwa4", //mapo tofu
-            "https://ipfs.infura.io/ipfs/QmRytjGb6c8pE523L52v8H1EDiADie9xyyi6eo2869LwqP", //miso ramen
-            "https://ipfs.infura.io/ipfs/QmSARVAVxsSu9yXrHAcvsMgi49zVZN9AGxUtpdYumcLewq", //cochinillo
-            "https://ipfs.infura.io/ipfs/QmaRndom8R2WM2Kw6P57KaipnYoXuPdCHhCUaM7KRJVVtj", //bacalao
-            "https://ipfs.infura.io/ipfs/QmPUKszQ4NUpZbmCxq1DXjCRsSrAopjP6YphmfHL4xsn9V", //pastrami privado
-            "https://ipfs.infura.io/ipfs/QmYuuSNyHuQqTqLxXU7LwVeipq3r6DGjYhj55KQ9KojJmr", //poke privado
-            "https://ipfs.infura.io/ipfs/QmThXTTxMoj8NdaNNcFxSxacngRXH4XtgyRmQMJ3Z3Dh5q", //empanada privada
-            "https://ipfs.infura.io/ipfs/QmWFJHmZF5oNhLZXGLZfzhjNbGims56A7mHbWmw6JDU7w2", //lombarda privada
-            "https://ipfs.infura.io/ipfs/QmQi97vEmFQUB7EZv3jm9aZHuFVwnXGirwFcEXxLmxBu1U", //mercaToken
-            "https://ipfs.infura.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu", //mcDonaldsCoin
-            "https://ipfs.infura.io/ipfs/QmSUVazUcpHVDNviNzsfuCtkWqt2DeqJ2pV8DjmzSzev5u" //gastrooToken
+            "https://gastroo.infura-ipfs.io/ipfs/QmdhVvgsgPc3FCJEJdT3KaepziPKi3dkyeo65wh6zMWMnA", //pizza
+            "https://gastroo.infura-ipfs.io/ipfs/QmU56VPKXrVKNwZW5JjMNJUBYKVm8fxZwooyTSSRnQACSv", //albondigas
+            "https://gastroo.infura-ipfs.io/ipfs/QmTprQcFBKVDMfK3sTDA4hxNyCmbSzXdf6ZgTMypWF75Ff", //cesar
+            "https://gastroo.infura-ipfs.io/ipfs/QmagBJatWuYgSh873wk1C4x9ci7TZS6MsUCS6YWHJkMh9m", //fetuccini
+            "https://gastroo.infura-ipfs.io/ipfs/QmZS733Permp7mBQ3SAZDEJ5XZg1Cb7b3bitTcufECRBba", //fried chicken
+            "https://gastroo.infura-ipfs.io/ipfs/QmQpjJAqbGy3E7M3yFL9KyZT9WEoWfN3TEhPryRqyipqEr", //lasagna
+            "https://gastroo.infura-ipfs.io/ipfs/QmfVtApThAQgzzbbQmCrbuxE9ix3MVSMqKKygF5xNmiwa4", //mapo tofu
+            "https://gastroo.infura-ipfs.io/ipfs/QmRytjGb6c8pE523L52v8H1EDiADie9xyyi6eo2869LwqP", //miso ramen
+            "https://gastroo.infura-ipfs.io/ipfs/QmSARVAVxsSu9yXrHAcvsMgi49zVZN9AGxUtpdYumcLewq", //cochinillo
+            "https://gastroo.infura-ipfs.io/ipfs/QmaRndom8R2WM2Kw6P57KaipnYoXuPdCHhCUaM7KRJVVtj", //bacalao
+            "https://gastroo.infura-ipfs.io/ipfs/QmPUKszQ4NUpZbmCxq1DXjCRsSrAopjP6YphmfHL4xsn9V", //pastrami privado
+            "https://gastroo.infura-ipfs.io/ipfs/QmYuuSNyHuQqTqLxXU7LwVeipq3r6DGjYhj55KQ9KojJmr", //poke privado
+            "https://gastroo.infura-ipfs.io/ipfs/QmThXTTxMoj8NdaNNcFxSxacngRXH4XtgyRmQMJ3Z3Dh5q", //empanada privada
+            "https://gastroo.infura-ipfs.io/ipfs/QmWFJHmZF5oNhLZXGLZfzhjNbGims56A7mHbWmw6JDU7w2", //lombarda privada
+            "https://gastroo.infura-ipfs.io/ipfs/QmQi97vEmFQUB7EZv3jm9aZHuFVwnXGirwFcEXxLmxBu1U", //mercaToken
+            "https://gastroo.infura-ipfs.io/ipfs/QmYQq3iH26RZ7gEU7zKrwuuAbzwomm6kLEcSxFL8hLapbu", //mcDonaldsCoin
+            "https://gastroo.infura-ipfs.io/ipfs/QmSUVazUcpHVDNviNzsfuCtkWqt2DeqJ2pV8DjmzSzev5u" //gastrooToken
         ];
 
         uint24[17] memory amounts = [
