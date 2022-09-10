@@ -5,7 +5,7 @@
 # Gastroo Web3: Monetiza tu contenido culinario
 _Un marketplace en Avalanche para la publicación o venta de recetas y videos culinarios en la web descentralizada._
 
-## Ya puedes probarlo en [gastroo.es](https://gastroo.es)!
+## Ya puedes probarlo en [gastroo.es](http://gastroo.es)!
 
 **Gastroo es un proyecto que busca fusionar el mundo culinario con la web descentralizada y provee una plataforma fácil de usar donde aficionados y profesionales de la cocina puedan sacar partido de su contenido gastronómico. En Gastroo, existen tres tipos principales de tokens:**
 * **GastroVídeos públicos: Cualquiera los puede ver mientras estén disponibles en el mercado.**
@@ -24,7 +24,7 @@ Para la realizacion de este proyecto se han utilizado las siguientes tecnologias
 * React.js
 * SASS
 
-Para probarlo tan solo navega a [gastroo.es](https://gastroo.es), clica en "Authenticate" y conecta tu cuenta de Metamask, se te pedirá que firmes para iniciar sesión. Después, selecciona la red de test Avalanche Fuji del desplegable arriba a la derecha.
+Para probarlo tan solo navega a [gastroo.es](http://gastroo.es), clica en "Authenticate" y conecta tu cuenta de Metamask, se te pedirá que firmes para iniciar sesión. Después, selecciona la red de test Avalanche Fuji del desplegable arriba a la derecha.
 
 ![network-select](https://user-images.githubusercontent.com/38076357/177833743-9a86dc66-5d18-4d08-9413-033a62780c28.png)
 
